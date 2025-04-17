@@ -1,0 +1,194 @@
+# This Python file uses the following encoding: utf-8
+
+version = "V0.1.0-alpha.1"
+verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
+
+# Cipher table is complete but may not be accurate
+cipher_table = { # Cipher key, thanks to https://www.reddit.com/user/Elegant_League_7367/
+    "Ì": "A",
+    "ì": "a",
+    "Ï": "B",
+    "ï": "b",
+    "Î": "C",
+    "î": "c",
+    "É": "D",
+    "é": "d",
+    "È": "E",
+    "è": "e",
+    "Ë": "F",
+    "ë": "f",
+    "Ê": "G",
+    "ê": "g",
+    "Å": "H",
+    "å": "h",
+    "Ä": "I",
+    "ä": "i",
+    "Ç": "J",
+    "ç": "j",
+    "Æ": "K",
+    "æ": "k",
+    "Á": "L",
+    "á": "l",
+    "À": "M",
+    "à": "m",
+    "Ã": "N",
+    "ã": "n",
+    "Â": "O",
+    "â": "o",
+    "Ý": "P",
+    "ý": "p",
+    "NOT-USED-Q": "Q",
+    "Ÿ": "R",
+    "ÿ": "r",
+    "ß": "R",
+    "Þ": "S",
+    "þ": "s",
+    "Ù": "T",
+    "ù": "t",
+    "Ø": "U",
+    "ø": "u",
+    "Û": "V",
+    "û": "v",
+    "Ú": "W",
+    "ú": "w",
+    "Õ": "X",
+    "õ": "x",
+    "Ô": "Y",
+    "ô": "y",
+    "NOT-USED-Z": "Z",
+    u"\u0094": "0", # Possibly a number, placeholder
+    u"\u0095": "7", # Possibly a number, placeholder
+    u"\u0096": "10", # Possibly a number, placeholder
+    u"\u0098": "9", # Possibly a number, placeholder
+    u"\u0099": "4", # Possibly a number, placeholder
+    u"\u009A": "5", # Possibly a number, placeholder
+    u"\u009B": "6", # Possibly a number, placeholder
+    u"\u009C": "1", # Possibly a number, best guess
+    u"\u009D": "8", # Possibly a number, placeholder
+    u"\u009E": "3", # Possibly a number, best guess
+    u"\u009F": "2", # Possibly a number, best guess
+    u"\u0083": "11", # Possibly a number, placeholder
+    "Ö": "{", # Syntax character, may be inaccurate
+    "ö": "{", # Syntax character, may be inaccurate
+    "Ð": "}", # Syntax character, may be inaccurate
+    "ò": "1", # Syntax character, may be inaccurate
+    "ð": "\n", # Syntax character, may be inaccurate
+    u"\u008F": " ", # Syntax character, may be inaccurate
+    u"\u0097": "=", # Syntax Character, may be inaccurate
+    u"\u008D": " ", # Syntax Character, may be inaccurate
+    "\u0081": """,""", # Syntax Character, may be inaccurate
+    "§": " "  # Line separator/space character
+}
+
+# Imports
+import sys
+import os
+import logging
+from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtCore import Qt, QTime
+
+# Important:
+# You need to run the following command to generate the ui_form.py file
+#     pyside6-uic form.ui -o ui_form.py, or
+#     pyside2-uic form.ui -o ui_form.py
+from ui_form import Ui_MainWindow
+
+# Setup the logger
+if verbose_logging == True:
+    logging.basicConfig(filename= "TUPperware.log", filemode= "w", level= logging.DEBUG, format="%(asctime)s:%(levelname)s:%(name)s: %(message)s", datefmt="%H:%M:%S")
+else:
+    logging.basicConfig(filename= "TUPperware.log", filemode= "w", level= logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s: %(message)s", datefmt="%H:%M:%S")
+logger = logging.getLogger(__name__)
+
+class MainWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.log_message(f"TUPperware Save Editor {version} By SomeSpaceNerd", "INFO")
+        self.ui.cipher_output_check_box.checkStateChanged.connect(self.update_cipher_output_option) # Connect update ciphered output function to the checkbox
+        # Connect the load save file button and pressing enter in the line edit to the load save function
+        self.ui.load_file_push_button.clicked.connect(self.load_save)
+        self.ui.input_path_line_edit.returnPressed.connect(self.load_save)
+        # Connect the export save fule button and pressing enter in the line edit to the export save function
+        self.ui.export_push_button.clicked.connect(self.export_save)
+        self.ui.output_path_line_edit.returnPressed.connect(self.export_save)
+
+    def load_save(self):
+        try:
+            with open(self.ui.input_path_line_edit.text(), "r", encoding = "utf_8") as tl_game_save: # Open the save file
+                # Check if the save is empty
+                if not tl_game_save.read(1):
+                    raise Exception("Invalid (empty or unreadable) input file")
+                else:
+                    self.log_message("Successfully loaded input file", "INFO")
+
+                ciphered_save = tl_game_save.read()
+                self.deciphered_save = ""
+                # Decipher the save file
+                for char in ciphered_save:
+                    if char in cipher_table:
+                        self.deciphered_save = self.deciphered_save + cipher_table.get(char)
+                    else:
+                        #self.deciphered_save = self.deciphered_save + "[ERR]"
+                        self.deciphered_save = self.deciphered_save + char
+                        self.log_message("Found invalid character in save file", "WARNING")
+
+
+                self.log_message("Finished deciphering save file", "INFO")
+                self.log_message(f"Deciphered save data is {self.deciphered_save}", "DEBUG")
+
+        # Catch any errors that may occur while loading the save file
+        except Exception as e:
+            self.log_message(f"An error occured while loading the save file: {e}", "ERROR")
+
+    def export_save(self):
+        try:
+            if self.cipher_output == True:
+                pass # I dont feel like dealing with more encoding errors right now
+            elif self.cipher_output == False:
+                output_save = self.deciphered_save
+
+            with open(self.ui.output_path_line_edit.text(), "w", encoding = "utf_8") as output_file:
+                self.log_message("Exporting save file...", "INFO")
+                output_file.write(output_save)
+                self.log_message("Save file exported successfully", "INFO")
+
+        # Catch any errors that may occur while exporting the save file
+        except Exception as e:
+            self.log_message(f"An error occured while exporting the save file: {e}", "ERROR")
+
+
+
+        except Exception as e:
+            self.log_message(f"An error occured while exporting the save file: {e}", "ERROR")
+
+    # Function to enable/disable ciphering the output depending on the UI checkbox
+    def update_cipher_output_option(self, state):
+        if state == Qt.Checked:
+            self.cipher_output = True
+            self.log_message("Enabled cipher output", "INFO")
+        else:
+            self.cipher_output = False
+            self.log_message("Disabled cipher output", "INFO")
+
+    # Helper function to log messages to both the in-app console and log file
+    def log_message(self, message, log_level):
+        # Format message for the console
+        console_message = f"[{QTime.currentTime().toString("HH:mm:ss")}][{log_level}]: {message}"
+        # Display the message to the console
+        if log_level != "DEBUG" or verbose_logging:
+            self.ui.log_text_browser.append(console_message)
+            scrollbar = self.ui.log_text_browser.verticalScrollBar()
+            scrollbar.setValue(scrollbar.maximum())
+            print(console_message)
+
+        # Log the message to the log file
+        lowercase_log_level = log_level.lower()
+        exec(f"""logger.{lowercase_log_level}("{message}")""")
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    widget = MainWindow()
+    widget.show()
+    sys.exit(app.exec())
