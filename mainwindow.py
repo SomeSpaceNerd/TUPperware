@@ -1,96 +1,99 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V0.1.0-alpha.1"
+version = "V0.1.0-alpha.2"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 # Cipher table is complete but may not be accurate
+# Syntax appears to be JSON
 cipher_table = { # Cipher key, thanks to https://www.reddit.com/user/Elegant_League_7367/
-    "Ì": "A",
-    "ì": "a",
-    "Ï": "B",
-    "ï": "b",
-    "Î": "C",
-    "î": "c",
-    "É": "D",
-    "é": "d",
-    "È": "E",
-    "è": "e",
-    "Ë": "F",
-    "ë": "f",
-    "Ê": "G",
-    "ê": "g",
-    "Å": "H",
-    "å": "h",
-    "Ä": "I",
-    "ä": "i",
-    "Ç": "J",
-    "ç": "j",
-    "Æ": "K",
-    "æ": "k",
-    "Á": "L",
-    "á": "l",
-    "À": "M",
-    "à": "m",
-    "Ã": "N",
-    "ã": "n",
-    "Â": "O",
-    "â": "o",
-    "Ý": "P",
-    "ý": "p",
-    "NOT-USED-Q": "Q",
-    "Ÿ": "R",
-    "ÿ": "r",
-    "ß": "R",
-    "Þ": "S",
-    "þ": "s",
-    "Ù": "T",
-    "ù": "t",
-    "Ø": "U",
-    "ø": "u",
-    "Û": "V",
-    "û": "v",
-    "Ú": "W",
-    "ú": "w",
-    "Õ": "X",
-    "õ": "x",
-    "Ô": "Y",
-    "ô": "y",
-    "NOT-USED-Z": "Z",
-    u"\u0094": "0", # Possibly a number, placeholder
-    u"\u0095": "7", # Possibly a number, placeholder
-    u"\u0096": "10", # Possibly a number, placeholder
-    u"\u0098": "9", # Possibly a number, placeholder
-    u"\u0099": "4", # Possibly a number, placeholder
-    u"\u009A": "5", # Possibly a number, placeholder
-    u"\u009B": "6", # Possibly a number, placeholder
+    "Ì": "a",
+    "ì": "A",
+    "Ï": "b",
+    "ï": "B",
+    "Î": "c",
+    "î": "C",
+    "É": "d",
+    "é": "D",
+    "È": "e",
+    "è": "E",
+    "Ë": "f",
+    "ë": "F",
+    "Ê": "g",
+    "ê": "G",
+    "Å": "h",
+    "å": "H",
+    "Ä": "i",
+    "ä": "I",
+    "Ç": "j",
+    "ç": "J",
+    "Æ": "k",
+    "æ": "K",
+    "Á": "l",
+    "á": "L",
+    "À": "m",
+    "à": "M",
+    "Ã": "n",
+    "ã": "N",
+    "Â": "o",
+    "â": "O",
+    "Ý": "p",
+    "ý": "P",
+    "Ü": "q",
+    "ü": "Q",
+    "Ÿ": "r",
+    "ÿ": "R",
+    "ß": "r",
+    "Þ": "s",
+    "þ": "S",
+    "Ù": "t",
+    "ù": "T",
+    "Ø": "u",
+    "ø": "U",
+    "Û": "v",
+    "û": "V",
+    "Ú": "w",
+    "ú": "W",
+    "Õ": "x",
+    "õ": "X",
+    "Ô": "y",
+    "ô": "Y",
+    "UNKNOWN-Z": "Z",
+    u"\u009F": "2",
+    u"\u0099": "4",
+    u"\u0094": "9", # Possibly a number, best guess
+    u"\u0095": "8", # Possibly a number, best guess
+    u"\u0098": "5", # Possibly a number, best guess
+    u"\u009A": "7", # Possibly a number, best guess
+    u"\u009B": "6", # Possibly a number, best guess
     u"\u009C": "1", # Possibly a number, best guess
-    u"\u009D": "8", # Possibly a number, placeholder
+    u"\u009D": "0", # Possibly a number, best guess
     u"\u009E": "3", # Possibly a number, best guess
-    u"\u009F": "2", # Possibly a number, best guess
-    u"\u0083": "11", # Possibly a number, placeholder
+    #u"\u0096": "10", # Possibly a number, was in my save file before but now isnt (?), placeholder
+    u"\u0083": "_", # Possibly a syntax character, number, or just character (used in numbers, like Act1_XXXX) (This SHOULD be a number, there is a syntax error if it is not)
+    "ò": "-", # Not a syntax character, used as a separator in strings
     "Ö": "{", # Syntax character, may be inaccurate
-    "ö": "{", # Syntax character, may be inaccurate
     "Ð": "}", # Syntax character, may be inaccurate
-    "ò": "1", # Syntax character, may be inaccurate
-    "ð": "\n", # Syntax character, may be inaccurate
-    u"\u008F": " ", # Syntax character, may be inaccurate
-    u"\u0097": "=", # Syntax Character, may be inaccurate
+    "ö": "[", # Syntax character, may be inaccurate
+    "ð": "]", # Syntax character, may be inaccurate
+    u"\u008F": '"', # Syntax character, may be inaccurate (Note this is a double quote)
+    u"\u0097": ":", # Syntax Character, may be inaccurate
     u"\u008D": " ", # Syntax Character, may be inaccurate
-    "\u0081": """,""", # Syntax Character, may be inaccurate
+    u"\u0081": ",", # Syntax Character, may be inaccurate
     "§": " "  # Line separator/space character
 }
+inv_cipher_table = {v: k for k, v in cipher_table.items()} # Create an inverted cipher table for ciphering the output save file (THIS WILL NOT WORK RIGHT NOW)
 
 # Imports
 import sys
-import os
 import logging
+import json
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt, QTime
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
-#     pyside6-uic form.ui -o ui_form.py, or
-#     pyside2-uic form.ui -o ui_form.py
+#     pyside6-uic form.ui -o ui_form.py
+
 from ui_form import Ui_MainWindow
 
 # Setup the logger
@@ -124,28 +127,47 @@ class MainWindow(QMainWindow):
                     self.log_message("Successfully loaded input file", "INFO")
 
                 ciphered_save = tl_game_save.read()
-                self.deciphered_save = ""
+                self.deciphered_save = "{" # THIS SHOULD BE "" BUT PYTHON DOES NOT READ FIRST Ö/{ CHARACTER
                 # Decipher the save file
                 for char in ciphered_save:
                     if char in cipher_table:
                         self.deciphered_save = self.deciphered_save + cipher_table.get(char)
                     else:
-                        #self.deciphered_save = self.deciphered_save + "[ERR]"
                         self.deciphered_save = self.deciphered_save + char
                         self.log_message("Found invalid character in save file", "WARNING")
 
 
                 self.log_message("Finished deciphering save file", "INFO")
                 self.log_message(f"Deciphered save data is {self.deciphered_save}", "DEBUG")
+                self.parse_save()
 
         # Catch any errors that may occur while loading the save file
         except Exception as e:
             self.log_message(f"An error occured while loading the save file: {e}", "ERROR")
 
+    def parse_save(self):
+        try:
+            self.log_message("Parsing save file...", "INFO")
+            self.json_game_save = json.loads(self.deciphered_save) # Load the save as JSON
+            for key in self.json_game_save:
+                value_type = type(self.json_game_save[key])
+                self.log_message(f"Type of value is {value_type}", "DEBUG")
+
+        except Exception as e:
+            self.log_message(f"An error occured while parsing the save file: {e}", "ERROR")
+
+
     def export_save(self):
         try:
             if self.cipher_output == True:
-                pass # I dont feel like dealing with more encoding errors right now
+                output_save = ""
+                for char in self.deciphered_save:
+                    if char in inv_cipher_table:
+                        output_save = output_save + inv_cipher_table.get(char)
+                    else:
+                        output_save = output_save + char
+                        self.log_message(f"Found invalid character in save file: {char}", "WARNING")
+
             elif self.cipher_output == False:
                 output_save = self.deciphered_save
 

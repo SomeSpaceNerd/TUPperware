@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="placeholderText">
-     <string>Path to your TLGameSave</string>
+     <string>Path to your TLGameSave / TLGameSettings</string>
     </property>
    </widget>
    <widget class="QPushButton" name="load_file_push_button">
