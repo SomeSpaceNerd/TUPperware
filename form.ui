@@ -10,8 +10,24 @@
     <height>400</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>480</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>480</width>
+    <height>400</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>TUPperware Save Editor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>img/TUPperware_logo.png</normaloff>img/TUPperware_logo.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLineEdit" name="input_path_line_edit">
@@ -59,11 +75,17 @@
       <height>200</height>
      </rect>
     </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed</set>
+    </property>
     <property name="columnCount">
      <number>2</number>
     </property>
     <attribute name="headerCascadingSectionResizes">
      <bool>true</bool>
+    </attribute>
+    <attribute name="headerDefaultSectionSize">
+     <number>210</number>
     </attribute>
     <column>
      <property name="text">

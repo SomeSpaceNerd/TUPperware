@@ -1,11 +1,11 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V0.1.0-alpha.2"
+version = "V0.1.0-alpha.3"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
-# Cipher table is complete but may not be accurate
-# Syntax appears to be JSON
-cipher_table = { # Cipher key, thanks to https://www.reddit.com/user/Elegant_League_7367/
+# Cipher table is complete but numbers may be inaccurate (theres no real way to tell numbers other than 1-4
+# Syntax is JSON
+cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
     "Ì": "a",
     "ì": "A",
     "Ï": "b",
@@ -58,36 +58,36 @@ cipher_table = { # Cipher key, thanks to https://www.reddit.com/user/Elegant_Lea
     "Ô": "y",
     "ô": "Y",
     "UNKNOWN-Z": "Z",
-    u"\u009F": "2",
-    u"\u0099": "4",
+    u"\u009C": "1", # Best guess
+    u"\u009F": "2", # Best guess
+    u"\u009E": "3", # Best guess
+    u"\u0099": "4", # Best guess
     u"\u0094": "9", # Possibly a number, best guess
     u"\u0095": "8", # Possibly a number, best guess
     u"\u0098": "5", # Possibly a number, best guess
     u"\u009A": "7", # Possibly a number, best guess
     u"\u009B": "6", # Possibly a number, best guess
-    u"\u009C": "1", # Possibly a number, best guess
     u"\u009D": "0", # Possibly a number, best guess
-    u"\u009E": "3", # Possibly a number, best guess
     #u"\u0096": "10", # Possibly a number, was in my save file before but now isnt (?), placeholder
-    u"\u0083": "_", # Possibly a syntax character, number, or just character (used in numbers, like Act1_XXXX) (This SHOULD be a number, there is a syntax error if it is not)
-    "ò": "-", # Not a syntax character, used as a separator in strings
-    "Ö": "{", # Syntax character, may be inaccurate
-    "Ð": "}", # Syntax character, may be inaccurate
-    "ö": "[", # Syntax character, may be inaccurate
-    "ð": "]", # Syntax character, may be inaccurate
-    u"\u008F": '"', # Syntax character, may be inaccurate (Note this is a double quote)
-    u"\u0097": ":", # Syntax Character, may be inaccurate
-    u"\u008D": " ", # Syntax Character, may be inaccurate
-    u"\u0081": ",", # Syntax Character, may be inaccurate
-    "§": " "  # Line separator/space character
+    u"\u0083": ".", # Used in numbers, may be inaccurate
+    "ò": "_", # Used as a prefix or seperator in strings ("_desertTutorialCompleteExplicit", "TUTORIAL_RewindOrFastforward"), may be inaccurate
+    "Ö": "{",
+    "Ð": "}",
+    "ö": "[",
+    "ð": "]",
+    u"\u008F": '"', # Note that this is a double quote
+    u"\u0097": ":",
+    u"\u008D": " ",
+    u"\u0081": ",",
+    "§": "\n"
 }
-inv_cipher_table = {v: k for k, v in cipher_table.items()} # Create an inverted cipher table for ciphering the output save file (THIS WILL NOT WORK RIGHT NOW)
+inv_cipher_table = {v: k for k, v in cipher_table.items()} # Create an inverted cipher table for ciphering the output save file
 
 # Imports
 import sys
 import logging
 import json
-from PySide6.QtWidgets import QApplication, QMainWindow
+from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem
 from PySide6.QtCore import Qt, QTime
 
 # Important:
@@ -116,25 +116,31 @@ class MainWindow(QMainWindow):
         # Connect the export save fule button and pressing enter in the line edit to the export save function
         self.ui.export_push_button.clicked.connect(self.export_save)
         self.ui.output_path_line_edit.returnPressed.connect(self.export_save)
+        self.deciphered_save = "" # Define an empty deciphered save varible for other functions
+        self.cipher_output = True # Define the default cipher output becuase the checkbox functions only update when its clicked
 
     def load_save(self):
         try:
             with open(self.ui.input_path_line_edit.text(), "r", encoding = "utf_8") as tl_game_save: # Open the save file
-                # Check if the save is empty
-                if not tl_game_save.read(1):
-                    raise Exception("Invalid (empty or unreadable) input file")
-                else:
-                    self.log_message("Successfully loaded input file", "INFO")
-
                 ciphered_save = tl_game_save.read()
-                self.deciphered_save = "{" # THIS SHOULD BE "" BUT PYTHON DOES NOT READ FIRST Ö/{ CHARACTER
+                # Check if the save file is valid
+                if not ciphered_save:
+                    raise Exception("Empty or invalid save file")
+                else:
+                    self.log_message("Successfully loaded save file", "INFO")
+                    self.log_message("Deciphering save file...", "INFO")
+
                 # Decipher the save file
+                self.deciphered_save = "" # Ensure the deciphered save variable is empty
                 for char in ciphered_save:
                     if char in cipher_table:
                         self.deciphered_save = self.deciphered_save + cipher_table.get(char)
                     else:
                         self.deciphered_save = self.deciphered_save + char
-                        self.log_message("Found invalid character in save file", "WARNING")
+                        if char in inv_cipher_table:
+                            self.log_message("Found already deciphered character, ignoring", "INFO")
+                        else:
+                            self.log_message("Found invalid character in save file", "WARNING")
 
 
                 self.log_message("Finished deciphering save file", "INFO")
@@ -144,21 +150,100 @@ class MainWindow(QMainWindow):
         # Catch any errors that may occur while loading the save file
         except Exception as e:
             self.log_message(f"An error occured while loading the save file: {e}", "ERROR")
+            self.parse_save() # TEMPORARY HACKY FIX BECAUSE WINDOWS PATH ALWAYS CAUSES ERROR EVEN WHEN THE FILE IS LOADED CORRECTLY
 
     def parse_save(self):
         try:
             self.log_message("Parsing save file...", "INFO")
             self.json_game_save = json.loads(self.deciphered_save) # Load the save as JSON
+            self.ui.save_tree_widget.clear() # Clear the tree widget
+            items = []
             for key in self.json_game_save:
-                value_type = type(self.json_game_save[key])
-                self.log_message(f"Type of value is {value_type}", "DEBUG")
+                self.log_message(f"Parsing key {key}", "DEBUG")
+                value = self.json_game_save[key]
+
+                if isinstance(value, (str, int, bool)):
+                    self.log_message("Key is str/int/bool", "DEBUG")
+                    items.append(self.parse_str_int_bool(self.json_game_save, key))
+
+                if isinstance(value, list):
+                    self.log_message("Key is list", "DEBUG")
+                    items.append(self.parse_list(self.json_game_save, key))
+
+                if isinstance(value, dict):
+                    self.log_message("Key is dict", "DEBUG")
+                    items.append(self.parse_dict(self.json_game_save, key))
+
+            self.ui.save_tree_widget.insertTopLevelItems(0, items)
 
         except Exception as e:
             self.log_message(f"An error occured while parsing the save file: {e}", "ERROR")
 
+    # These functions parse through a dictionary and key and return a QTreeListItem
+    # String, Integer, or Boolean parser function
+    def parse_str_int_bool(self, dict, key):
+        self.log_message("Called string/integer/bool handler", "DEBUG") # Log a debug message
+        item=QTreeWidgetItem([key, str(dict[key])]) # Setup an item
+        item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
+        return item # Return the item
+
+    # List parser function
+    def parse_list(self, input_dict, key):
+        self.log_message("Called list handler", "DEBUG") # Log a debug message
+        item = QTreeWidgetItem([key]) # Setup an item
+        item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
+        data_list = input_dict[key] # Get the list from the dictionary
+
+        for list_item in data_list: # Loop through all of the items in the list
+            # If the item is a string, integer, or boolean, add it as a child
+            if isinstance(list_item, (str, int, bool)):
+                child_item = QTreeWidgetItem(["", str(list_item)])
+                item.addChild(child_item)
+
+            # If the item is a list, call the list handler and add its resulting item as a child
+            if isinstance(list_item, list):
+                temp_dict = {1: list_item}
+                item.addChild(self.parse_list(temp_dict, 1))
+
+            # If the item is a dictionary, call the dictionary handler and add its resulting item as a child
+            if isinstance(list_item, dict):
+                temp_dict = {1: list_item}
+                item.addChild(self.parse_dict(temp_dict, 1))
+
+        return item # Return the item
+
+    # Dictionary parser function
+    def parse_dict(self, base_dict, base_key):
+        self.log_message("Called dict handler", "DEBUG") # Log a debug message
+        item = QTreeWidgetItem([base_key]) # Setup an item
+        item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
+        dictionary = base_dict[base_key] # Get the dictionary from the input dictionary
+
+        for key in dictionary: # Loop through the dictionary
+            self.log_message(f"Parsing sub key {key}", "DEBUG") # Log a debug message
+            value = dictionary[key] # Get the value from the dictionary
+
+            # If the value is a string, integer, or boolean, add it as a child
+            if isinstance(value, (str, int, bool)):
+                item.addChild(self.parse_str_int_bool(dictionary, key))
+
+            # If the value is a list, call the list handler and add its resulting item as a child
+            if isinstance(value, list):
+                item.addChild(self.parse_list(dictionary, key))
+
+            # If the value is a dictionary, call the dictionary handler and add its resulting item as a child
+            if isinstance(value, dict):
+                item.addChild(self.parse_dict(dictionary, key))
+
+        return item # Return the item
 
     def export_save(self):
         try:
+            # Check if a save file has been loaded
+            if not self.deciphered_save:
+                raise Exception("You have not loaded a save file yet")
+
+            # Cipher the output if it is enables
             if self.cipher_output == True:
                 output_save = ""
                 for char in self.deciphered_save:
@@ -166,11 +251,16 @@ class MainWindow(QMainWindow):
                         output_save = output_save + inv_cipher_table.get(char)
                     else:
                         output_save = output_save + char
-                        self.log_message(f"Found invalid character in save file: {char}", "WARNING")
+                        if char in cipher_table:
+                            self.log_message("Found already ciphered character, ignoring", "WARNING")
+                        else:
+                            self.log_message(f"Found invalid character in save file: {char}", "WARNING")
 
+            # Dont cipher the output if it is not requested
             elif self.cipher_output == False:
                 output_save = self.deciphered_save
 
+            # Export the output save file
             with open(self.ui.output_path_line_edit.text(), "w", encoding = "utf_8") as output_file:
                 self.log_message("Exporting save file...", "INFO")
                 output_file.write(output_save)
