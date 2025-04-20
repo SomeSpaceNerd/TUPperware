@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V0.1.0-alpha.3"
+version = "V0.1.0-alpha.4"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 # Cipher table is complete but numbers may be inaccurate (theres no real way to tell numbers other than 1-4
@@ -194,10 +194,13 @@ class MainWindow(QMainWindow):
         item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
         data_list = input_dict[key] # Get the list from the dictionary
 
-        for list_item in data_list: # Loop through all of the items in the list
+        for index, list_item in enumerate(data_list): # Loop through all of the items in the list
+            self.log_message(f"Index {index} is {list_item}", "DEBUG")
+
             # If the item is a string, integer, or boolean, add it as a child
             if isinstance(list_item, (str, int, bool)):
-                child_item = QTreeWidgetItem(["", str(list_item)])
+                child_item = QTreeWidgetItem([str(index), str(list_item)])
+                child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
                 item.addChild(child_item)
 
             # If the item is a list, call the list handler and add its resulting item as a child
@@ -237,16 +240,81 @@ class MainWindow(QMainWindow):
 
         return item # Return the item
 
+    # Helper functions for exporting the modified save file
+    # Converts the QTreeWidget data to JSON
+    def tree_to_dict(self, tree_item):
+        child_count = tree_item.childCount()
+        self.log_message(f"Called tree to dictionary with tree item: {tree_item}", "DEBUG")
+        self.log_message(f"Item has {child_count} children", "DEBUG")
+
+        if child_count == 0:
+            # Leaf node
+            key = tree_item.text(0)
+            value = tree_item.text(1)
+            value_lower = value.strip().lower()
+            if value_lower == "true":
+                return key, True
+            elif value_lower == "false":
+                return key, False
+            elif value_lower == "null":
+                return key, None
+            else:
+                try:
+                    return key, json.loads(value)
+                except:
+                    return key, value
+        else:
+            key = tree_item.text(0)
+
+            # Determine if it's a list: all children have numeric keys (like "0", "1", "2", ...)
+            is_list = True
+            for i in range(child_count):
+                child_key = tree_item.child(i).text(0)
+                if not child_key.isdigit():
+                    is_list = False
+                    break
+
+            if is_list:
+                # Build list based on sorted numeric keys
+                result_list = [None] * child_count
+                for i in range(child_count):
+                    child = tree_item.child(i)
+                    index = int(child.text(0))
+                    _, value = self.tree_to_dict(child)
+                    result_list[index] = value
+                return key, result_list
+            else:
+                # Normal dictionary
+                d = {}
+                for i in range(child_count):
+                    k, v = self.tree_to_dict(tree_item.child(i))
+                    d[k] = v
+                return key, d
+
+    # Updates the main JSON game save variable from the QTreeWidget
+    def update_json_from_tree(self):
+        self.log_message("Updating JSON save variable from tree", "DEBUG")
+        new_data = {}
+        for i in range(self.ui.save_tree_widget.topLevelItemCount()):
+            item = self.ui.save_tree_widget.topLevelItem(i)
+            k, v = self.tree_to_dict(item)
+            new_data[k] = v
+        self.log_message(f"Updated JSON save data is {new_data}", "DEBUG")
+        self.json_game_save = new_data
+
     def export_save(self):
         try:
             # Check if a save file has been loaded
             if not self.deciphered_save:
                 raise Exception("You have not loaded a save file yet")
 
+            self.update_json_from_tree()
+            export_data = json.dumps(self.json_game_save, indent=4)
+
             # Cipher the output if it is enables
             if self.cipher_output == True:
                 output_save = ""
-                for char in self.deciphered_save:
+                for char in export_data:
                     if char in inv_cipher_table:
                         output_save = output_save + inv_cipher_table.get(char)
                     else:
@@ -258,7 +326,7 @@ class MainWindow(QMainWindow):
 
             # Dont cipher the output if it is not requested
             elif self.cipher_output == False:
-                output_save = self.deciphered_save
+                output_save = export_data
 
             # Export the output save file
             with open(self.ui.output_path_line_edit.text(), "w", encoding = "utf_8") as output_file:
@@ -267,11 +335,6 @@ class MainWindow(QMainWindow):
                 self.log_message("Save file exported successfully", "INFO")
 
         # Catch any errors that may occur while exporting the save file
-        except Exception as e:
-            self.log_message(f"An error occured while exporting the save file: {e}", "ERROR")
-
-
-
         except Exception as e:
             self.log_message(f"An error occured while exporting the save file: {e}", "ERROR")
 
