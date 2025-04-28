@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V0.1.0-alpha.4"
+version = "V1.0.0-beta.1"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 # Cipher table is complete but numbers may be inaccurate (theres no real way to tell numbers other than 1-4
@@ -57,17 +57,17 @@ cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_Leag
     "õ": "X",
     "Ô": "y",
     "ô": "Y",
-    "UNKNOWN-Z": "Z",
-    u"\u009C": "1", # Best guess
-    u"\u009F": "2", # Best guess
-    u"\u009E": "3", # Best guess
-    u"\u0099": "4", # Best guess
+    "Z": "Z", # Never used in the game's save system (to the best of my knowledge)
+    u"\u009D": "0", # Correct (I think)
+    u"\u009C": "1", # Correct
+    u"\u009F": "2", # Correct
+    u"\u009E": "3", # Correct
+    u"\u0099": "4", # Correct
+    u"\u0098": "5", # Correct
+    u"\u009B": "6", # Correct
+    u"\u009A": "7", # Correct
+    u"\u0095": "8", # Correct
     u"\u0094": "9", # Possibly a number, best guess
-    u"\u0095": "8", # Possibly a number, best guess
-    u"\u0098": "5", # Possibly a number, best guess
-    u"\u009A": "7", # Possibly a number, best guess
-    u"\u009B": "6", # Possibly a number, best guess
-    u"\u009D": "0", # Possibly a number, best guess
     #u"\u0096": "10", # Possibly a number, was in my save file before but now isnt (?), placeholder
     u"\u0083": ".", # Used in numbers, may be inaccurate
     "ò": "_", # Used as a prefix or seperator in strings ("_desertTutorialCompleteExplicit", "TUTORIAL_RewindOrFastforward"), may be inaccurate
@@ -189,56 +189,67 @@ class MainWindow(QMainWindow):
 
     # List parser function
     def parse_list(self, input_dict, key):
-        self.log_message("Called list handler", "DEBUG") # Log a debug message
-        item = QTreeWidgetItem([key]) # Setup an item
-        item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
-        data_list = input_dict[key] # Get the list from the dictionary
+            self.log_message("Called list handler", "DEBUG")
+            # Ensure both columns exist: key and placeholder for value
+            item = QTreeWidgetItem([str(key), ""])  # :contentReference[oaicite:0]{index=0}
+            # Make the node itself editable/draggable/checkable
+            item.setFlags(
+                Qt.ItemIsSelectable
+                | Qt.ItemIsEditable
+                | Qt.ItemIsDragEnabled
+                | Qt.ItemIsDropEnabled
+                | Qt.ItemIsUserCheckable
+                | Qt.ItemIsEnabled
+            )
 
-        for index, list_item in enumerate(data_list): # Loop through all of the items in the list
-            self.log_message(f"Index {index} is {list_item}", "DEBUG")
+            data_list = input_dict[key]
+            for index, list_item in enumerate(data_list):
+                self.log_message(f"Index {index} is {list_item}", "DEBUG")
+                idx_str = str(index)
 
-            # If the item is a string, integer, or boolean, add it as a child
-            if isinstance(list_item, (str, int, bool)):
-                child_item = QTreeWidgetItem([str(index), str(list_item)])
-                child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
-                item.addChild(child_item)
+                if isinstance(list_item, (str, int, bool)):
+                    child_item = QTreeWidgetItem([idx_str, str(list_item)])
+                    # Add editable flag to the leaf
+                    child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
+                    item.addChild(child_item)
 
-            # If the item is a list, call the list handler and add its resulting item as a child
-            if isinstance(list_item, list):
-                temp_dict = {1: list_item}
-                item.addChild(self.parse_list(temp_dict, 1))
+                elif isinstance(list_item, list):
+                    # Use the actual index as the key to avoid duplicates
+                    temp_dict = {idx_str: list_item}
+                    nested_item = self.parse_list(temp_dict, idx_str)
+                    item.addChild(nested_item)
 
-            # If the item is a dictionary, call the dictionary handler and add its resulting item as a child
-            if isinstance(list_item, dict):
-                temp_dict = {1: list_item}
-                item.addChild(self.parse_dict(temp_dict, 1))
+                elif isinstance(list_item, dict):
+                    temp_dict = {idx_str: list_item}
+                    nested_item = self.parse_dict(temp_dict, idx_str)
+                    item.addChild(nested_item)
 
-        return item # Return the item
+            return item
 
-    # Dictionary parser function
     def parse_dict(self, base_dict, base_key):
-        self.log_message("Called dict handler", "DEBUG") # Log a debug message
-        item = QTreeWidgetItem([base_key]) # Setup an item
-        item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
-        dictionary = base_dict[base_key] # Get the dictionary from the input dictionary
+        self.log_message("Called dict handler", "DEBUG")
+        # Ensure both columns exist
+        item = QTreeWidgetItem([str(base_key), ""])
+        item.setFlags(
+            Qt.ItemIsSelectable
+            | Qt.ItemIsEditable
+            | Qt.ItemIsDragEnabled
+            | Qt.ItemIsDropEnabled
+            | Qt.ItemIsUserCheckable
+            | Qt.ItemIsEnabled
+        )
 
-        for key in dictionary: # Loop through the dictionary
-            self.log_message(f"Parsing sub key {key}", "DEBUG") # Log a debug message
-            value = dictionary[key] # Get the value from the dictionary
-
-            # If the value is a string, integer, or boolean, add it as a child
+        dictionary = base_dict[base_key]
+        for key, value in dictionary.items():
+            self.log_message(f"Parsing sub key {key}", "DEBUG")
             if isinstance(value, (str, int, bool)):
                 item.addChild(self.parse_str_int_bool(dictionary, key))
+            elif isinstance(value, list):
+                item.addChild(self.parse_list({key: value}, key))
+            elif isinstance(value, dict):
+                item.addChild(self.parse_dict({key: value}, key))
 
-            # If the value is a list, call the list handler and add its resulting item as a child
-            if isinstance(value, list):
-                item.addChild(self.parse_list(dictionary, key))
-
-            # If the value is a dictionary, call the dictionary handler and add its resulting item as a child
-            if isinstance(value, dict):
-                item.addChild(self.parse_dict(dictionary, key))
-
-        return item # Return the item
+        return item
 
     # Helper functions for exporting the modified save file
     # Converts the QTreeWidget data to JSON
