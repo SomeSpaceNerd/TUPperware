@@ -5,31 +5,31 @@ A save editor for The Under Presents
 This section will tell you how to download, use, and modify the code of the program
 
 ### Download the program
-If you just want to download and use the program, click on the green "Code" button in the top right, then "Download ZIP", then extract the ZIP archive
+If you just want to download and use the program, click on the green "Code" button in the top right, then "Download ZIP", then extract the ZIP archive.
 
-If you want to download the program and intend to modify it, install Git on your machine and run the command ``` git clone https://github.com/SomeSpaceNerd/TUPperware.git ```
+If you want to download the program and intend to modify it, install Git on your machine and run the command ``` git clone https://github.com/SomeSpaceNerd/TUPperware.git ```.
 
 ### Usage
-Step 1: Download and install Python 3.12 (or later) for your operating system from [Python's Website](https://www.python.org/downloads/)
+Step 1: Download and install Python 3.12 (or later) for your operating system from [Python's Website](https://www.python.org/downloads/).
 
 Step 2:   
-If you are on Windows, run the ``` TUPperware.bat ``` file to setup and run the program
+If you are on Windows, run the ``` TUPperware.bat ``` file to setup and run the program.
 
-If you are on Linux or MacOS run the ``` TUPperware.sh ``` file to setup and run the program
+If you are on Linux or MacOS run the ``` TUPperware.sh ``` file to setup and run the program.
 
 TODO: How to use the program
 
 ### Modification and Contributing
-This program was made in QT Creator Community Edition 16.0.1 using Python 3.12 and PySide6
+This program was made in QT Creator Community Edition 16.0.1 using Python 3.12 and PySide6.
 
-I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss)   
-However, you can modify the mainwindow.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator
+I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss).
+However, you can modify the mainwindow.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator.
 
 ## Save File Notes
-This section contains some notes about the save file's formatting and values
+This section contains some notes about the save file's formatting and values.
 
 ### Cipher Key
-The game encrypts a JSON file using a substitution cipher with the following key   
+The game encrypts a JSON file using a substitution cipher with the following key:   
 
 | Ciphered Character  | Deciphered Character |
 |---------------------|----------------------|
@@ -108,8 +108,8 @@ The game encrypts a JSON file using a substitution cipher with the following key
 | §                   | (newline)            |
 
 ### Mask Designs
-The player's mask design is stored under cosmetics > maskDesign   
-The mask design is represented with numbers from 0-9
+The player's mask design is stored under cosmetics > maskDesign.  
+The mask design is represented with numbers from 0-9:
 
 | Number | Mask    |
 |--------|---------|
@@ -126,8 +126,8 @@ The mask design is represented with numbers from 0-9
 **NOTICE: SETTING YOUR MASK DESIGN TO 1 OR 8 (CYCLOPS OR TEMPEST) COULD CAUSE YOU TO GET BANNED BECAUSE THEY ARE NORMALLY UNOBTAINABLE**
 
 ### Hats
-The player's hat is stored under persistentHatDesign   
-The hat is represented with numbers from 0-33   
+The player's hat is stored under persistentHatDesign.   
+The hat is represented with numbers from 0-33:   
 
 | Number | Hat               |
 |--------|-------------------|
@@ -167,14 +167,10 @@ The hat is represented with numbers from 0-33
 | 33     | Boot Hat          |
 
 ## Known glitches and issues:
-This section outlines the known issues that can occur from loading a modified save into the game
+This section outlines the known issues that can occur from loading a modified save into the game.
 
 1. Setting your mask design to 1 (Cyclops), or any number outside of the 0-9 range causes it to render without a front mesh (effectively being transparent from the front) and can cause other strange issues like players becoming invisible, or game crashes.
 2. Setting your mask design to 5 (VIP) and going into the Timeboat photobooth without 100%ing Timeboat will result in you being stuck in the limbo/interlude room with the photobooth displaying the "1" texture on it's screen. In this glitched state, you are able to take your mask out of the tray and do magic.
-
-## Legal Disclaimer
-
-## Disclaimer
 
 ## Disclaimer
 
