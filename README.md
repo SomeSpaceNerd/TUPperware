@@ -22,7 +22,7 @@ TODO: How to use the program
 ### Modification and Contributing
 This program was made in QT Creator Community Edition 16.0.1 using Python 3.12 and PySide6.
 
-I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss).
+I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss).   
 However, you can modify the mainwindow.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator.
 
 ## Save File Notes
