@@ -1,10 +1,8 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-beta.1"
+version = "V1.0.0-beta.2"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
-# Cipher table is complete but numbers may be inaccurate (theres no real way to tell numbers other than 1-4
-# Syntax is JSON
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
     "Ì": "a",
     "ì": "A",
@@ -69,25 +67,25 @@ cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_Leag
     u"\u0095": "8", # Correct
     u"\u0094": "9", # Possibly a number, best guess
     #u"\u0096": "10", # Possibly a number, was in my save file before but now isnt (?), placeholder
-    u"\u0083": ".", # Used in numbers, may be inaccurate
-    "ò": "_", # Used as a prefix or seperator in strings ("_desertTutorialCompleteExplicit", "TUTORIAL_RewindOrFastforward"), may be inaccurate
+    u"\u0083": ".", # Used in numbers
+    "ò": "_", # Used as a prefix or seperator in strings ("_desertTutorialCompleteExplicit", "TUTORIAL_RewindOrFastforward"), likely an artifact from Newtonsoft JSON
     "Ö": "{",
     "Ð": "}",
     "ö": "[",
     "ð": "]",
     u"\u008F": '"', # Note that this is a double quote
     u"\u0097": ":",
-    u"\u008D": " ",
+    u"\u008D": " ", # Note that this is a space
     u"\u0081": ",",
     "§": "\n"
 }
-inv_cipher_table = {v: k for k, v in cipher_table.items()} # Create an inverted cipher table for ciphering the output save file
+inv_cipher_table = {v: k for k, v in cipher_table.items()} # Creates an inverted cipher table for re-ciphering the output save file
 
 # Imports
 import sys
 import logging
 import json
-from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem
+from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem, QMessageBox
 from PySide6.QtCore import Qt, QTime
 
 # Important:
@@ -121,7 +119,8 @@ class MainWindow(QMainWindow):
 
     def load_save(self):
         try:
-            with open(self.ui.input_path_line_edit.text(), "r", encoding = "utf_8") as tl_game_save: # Open the save file
+            self.input_file_path = self.ui.input_path_line_edit.text()
+            with open(self.input_file_path, "r", encoding = "utf_8") as tl_game_save: # Open the save file
                 ciphered_save = tl_game_save.read()
                 # Check if the save file is valid
                 if not ciphered_save:
@@ -133,6 +132,9 @@ class MainWindow(QMainWindow):
                 # Decipher the save file
                 self.deciphered_save = "" # Ensure the deciphered save variable is empty
                 for char in ciphered_save:
+                    # THIS SHOULD BE UNCOMMENTED BUT WINDOWS PATHS CAUSE AN ERROR HERE TOO
+                    # QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while loading
+
                     if char in cipher_table:
                         self.deciphered_save = self.deciphered_save + cipher_table.get(char)
                     else:
@@ -150,7 +152,7 @@ class MainWindow(QMainWindow):
         # Catch any errors that may occur while loading the save file
         except Exception as e:
             self.log_message(f"An error occured while loading the save file: {e}", "ERROR")
-            self.parse_save() # TEMPORARY HACKY FIX BECAUSE WINDOWS PATH ALWAYS CAUSES ERROR EVEN WHEN THE FILE IS LOADED CORRECTLY
+            self.parse_save() # TEMPORARY HACKY FIX BECAUSE WINDOWS PATHS ALWAYS CAUSES ERROR EVEN WHEN THE FILE IS LOADED CORRECTLY
 
     def parse_save(self):
         try:
@@ -162,9 +164,9 @@ class MainWindow(QMainWindow):
                 self.log_message(f"Parsing key {key}", "DEBUG")
                 value = self.json_game_save[key]
 
-                if isinstance(value, (str, int, bool)):
+                if isinstance(value, (str, int, float, bool)):
                     self.log_message("Key is str/int/bool", "DEBUG")
-                    items.append(self.parse_str_int_bool(self.json_game_save, key))
+                    items.append(self.parse_str_int_float_bool(self.json_game_save, key))
 
                 if isinstance(value, list):
                     self.log_message("Key is list", "DEBUG")
@@ -180,9 +182,9 @@ class MainWindow(QMainWindow):
             self.log_message(f"An error occured while parsing the save file: {e}", "ERROR")
 
     # These functions parse through a dictionary and key and return a QTreeListItem
-    # String, Integer, or Boolean parser function
-    def parse_str_int_bool(self, dict, key):
-        self.log_message("Called string/integer/bool handler", "DEBUG") # Log a debug message
+    # String, Integer, Floating Point, or Boolean parser function
+    def parse_str_int_float_bool(self, dict, key):
+        self.log_message("Called string/integer/floating point/bool handler", "DEBUG") # Log a debug message
         item=QTreeWidgetItem([key, str(dict[key])]) # Setup an item
         item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
         return item # Return the item
@@ -207,7 +209,7 @@ class MainWindow(QMainWindow):
                 self.log_message(f"Index {index} is {list_item}", "DEBUG")
                 idx_str = str(index)
 
-                if isinstance(list_item, (str, int, bool)):
+                if isinstance(list_item, (str, int, float, bool)):
                     child_item = QTreeWidgetItem([idx_str, str(list_item)])
                     # Add editable flag to the leaf
                     child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
@@ -242,8 +244,8 @@ class MainWindow(QMainWindow):
         dictionary = base_dict[base_key]
         for key, value in dictionary.items():
             self.log_message(f"Parsing sub key {key}", "DEBUG")
-            if isinstance(value, (str, int, bool)):
-                item.addChild(self.parse_str_int_bool(dictionary, key))
+            if isinstance(value, (str, int, float, bool)):
+                item.addChild(self.parse_str_int_float_bool(dictionary, key))
             elif isinstance(value, list):
                 item.addChild(self.parse_list({key: value}, key))
             elif isinstance(value, dict):
@@ -319,6 +321,16 @@ class MainWindow(QMainWindow):
             if not self.deciphered_save:
                 raise Exception("You have not loaded a save file yet")
 
+            self.output_file_path = self.ui.output_path_line_edit.text()
+            if self.input_file_path == self.output_file_path: # Check if the user is exporting to the same file they imported from
+                # Show a warning dialog box and see if the user wants to continue
+                result = self.show_warning_dialog("Warning", "You are attempting to export the save data to the same file you imported it from. This is highly not reccomended unless you have a seperate backup of your input save.\nIgnoring this warning could cause irrecoverable issues in-game.")
+
+                if result == True:
+                    pass
+                if result == False:
+                    raise Exception("Canceled from warning dialog box")
+
             self.update_json_from_tree()
             export_data = json.dumps(self.json_game_save, indent=4)
 
@@ -326,6 +338,9 @@ class MainWindow(QMainWindow):
             if self.cipher_output == True:
                 output_save = ""
                 for char in export_data:
+                    # THIS SHOULD BE UNCOMMENTED BUT WINDOWS PATHS CAUSE AN ERROR HERE TOO
+                    # QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while exporting
+
                     if char in inv_cipher_table:
                         output_save = output_save + inv_cipher_table.get(char)
                     else:
@@ -348,6 +363,30 @@ class MainWindow(QMainWindow):
         # Catch any errors that may occur while exporting the save file
         except Exception as e:
             self.log_message(f"An error occured while exporting the save file: {e}", "ERROR")
+
+    def show_warning_dialog(self, title, text):
+        # Create the message box
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Warning)          # Set warning icon
+        msg_box.setWindowTitle(title)              # Window title
+        msg_box.setText(text)  # Main text
+
+        # Add custom buttons
+        proceed_button = msg_box.addButton("Continue", QMessageBox.AcceptRole)
+        cancel_button = msg_box.addButton("Cancel", QMessageBox.RejectRole)
+
+        msg_box.setDefaultButton(cancel_button)        # Default focus on Cancel
+        msg_box.setEscapeButton(cancel_button)         # Hitting Esc triggers Cancel
+
+        msg_box.exec()  # Open as a **modal** dialog
+
+        # Determine which button was clicked
+        if msg_box.clickedButton() == proceed_button:
+            self.log_message("Proceeding past warning dialog", "DEBUG")
+            return True
+        else:
+            self.log_message("Aborting operation", "DEBUG")
+            return False
 
     # Function to enable/disable ciphering the output depending on the UI checkbox
     def update_cipher_output_option(self, state):

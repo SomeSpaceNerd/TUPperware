@@ -5,13 +5,25 @@ A save editor for The Under Presents
 This section will tell you how to download, use, and modify the code of the program
 
 ### Download the program
-If you just want to download and use the program, click on the green "Code" button in the top left, then "Download ZIP", then extract the ZIP archive   
+If you just want to download and use the program, click on the green "Code" button in the top left, then "Download ZIP", then extract the ZIP archive
+
 If you want to download the program and intend to modify it, install Git on your machine and run the command ``` git clone https://github.com/SomeSpaceNerd/TUPperware.git ```
 
 ### Usage
 Step 1: Download and install Python 3.12 (or later) for your operating system from [Python's Website](https://www.python.org/downloads/)
 
-TODO
+Step 2:   
+If you are on Windows, run the ``` TUPperware.bat ``` file to setup and run the program
+
+If you are on Linux or MacOS run the ``` TUPperware.sh ``` file to setup and run the program
+
+TODO: How to use the program
+
+### Modification and Contributing
+This program was made in QT Creator Community Edition 16.0.1 using Python 3.12 and PySide6
+
+I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss)   
+However, you can modify the mainwindow.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator
 
 ## Save File Notes
 This section contains some notes about the save file's formatting and values
@@ -153,4 +165,22 @@ The hat is represented with numbers from 0-33
 | 31     | Flower Crown Low  |
 | 32     | Bow Hat           |
 | 33     | Boot Hat          |
+
+## Known glitches and issues:
+This section outlines the known issues that can occur from loading a modified save into the game
+
+1. Setting your mask design to 1 (Cyclops), or any number outside of the 0-9 range causes it to render without a front mesh (effectively being transparent from the front) and can cause other strange issues like players becoming invisible, or game crashes.
+2. Setting your mask design to 5 (VIP) and going into the Timeboat photobooth without 100%ing Timeboat will result in you being stuck in the limbo/interlude room with the photobooth displaying the "1" texture on it's screen. In this glitched state, you are able to take your mask out of the tray and do magic.
+
+## Legal Disclaimer
+
+## Disclaimer
+
+## Disclaimer
+
+TUPperware is an independent, open-source project released under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html). It is not affiliated with, endorsed by, or sponsored by Tender Claws or any of its partners. All trademarks, service marks, and copyrights related to *The Under Presents* are the property of their respective owners.
+
+This software is provided solely for educational and research purposes. It is intended to help users better understand how *The Under Presents*' game save data works. The author does not condone or encourage using this tool to gain unauthorized access to paid content or to violate the terms of service of any game or platform.
+
+By using this software, you agree that you do so at your own risk. The author is not responsible for any loss of save data, in-game progress, or consequences such as account suspension, banning, or any other penalties that may result from its use.
 
