@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-beta.3"
+version = "V1.0.0-beta.4"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -85,12 +85,14 @@ inv_cipher_table = {v: k for k, v in cipher_table.items()} # Creates an inverted
 import sys
 import logging
 import json
+from deepdiff import DeepDiff
 from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem, QMessageBox
 from PySide6.QtCore import Qt, QTime
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
 #     pyside6-uic form.ui -o ui_form.py
+#     The install/execution scripts and QT Creator handle this for you
 
 from ui_form import Ui_MainWindow
 
@@ -226,28 +228,32 @@ class MainWindow(QMainWindow):
             )
 
             data_list = input_dict[key]
-            for index, list_item in enumerate(data_list):
-                self.log_message(f"Index {index} is {list_item}", "DEBUG")
-                idx_str = str(index)
 
-                if isinstance(list_item, (str, int, float, bool)):
-                    child_item = QTreeWidgetItem([idx_str, str(list_item)])
-                    if list_item in self.tooltips:
-                        child_item.setToolTip(1, self.tooltips[str(list_item)])
-                    # Add editable flag to the leaf
-                    child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
-                    item.addChild(child_item)
+            if not data_list:
+                item = QTreeWidgetItem([str(key), "[EMPTY LIST]"])
+            else:
+                for index, list_item in enumerate(data_list):
+                    self.log_message(f"Index {index} is {list_item}", "DEBUG")
+                    idx_str = str(index)
 
-                elif isinstance(list_item, list):
-                    # Use the actual index as the key to avoid duplicates
-                    temp_dict = {idx_str: list_item}
-                    nested_item = self.parse_list(temp_dict, idx_str)
-                    item.addChild(nested_item)
+                    if isinstance(list_item, (str, int, float, bool)):
+                        child_item = QTreeWidgetItem([idx_str, str(list_item)])
+                        if list_item in self.tooltips:
+                            child_item.setToolTip(1, self.tooltips[str(list_item)])
+                        # Add editable flag to the leaf
+                        child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
+                        item.addChild(child_item)
 
-                elif isinstance(list_item, dict):
-                    temp_dict = {idx_str: list_item}
-                    nested_item = self.parse_dict(temp_dict, idx_str)
-                    item.addChild(nested_item)
+                    elif isinstance(list_item, list):
+                        # Use the actual index as the key to avoid duplicates
+                        temp_dict = {idx_str: list_item}
+                        nested_item = self.parse_list(temp_dict, idx_str)
+                        item.addChild(nested_item)
+
+                    elif isinstance(list_item, dict):
+                        temp_dict = {idx_str: list_item}
+                        nested_item = self.parse_dict(temp_dict, idx_str)
+                        item.addChild(nested_item)
 
             return item
 
@@ -294,6 +300,8 @@ class MainWindow(QMainWindow):
                 return key, False
             elif value_lower == "null":
                 return key, None
+            elif value == "[EMPTY LIST]":
+                return key, []
             else:
                 try:
                     return key, json.loads(value)
@@ -336,6 +344,8 @@ class MainWindow(QMainWindow):
             k, v = self.tree_to_dict(item)
             new_data[k] = v
         self.log_message(f"Updated JSON save data is {new_data}", "DEBUG")
+        diff = DeepDiff(self.json_game_save, new_data, ignore_order=False)
+        self.log_message(f"Difference between input and output file is {diff}", "INFO")
         self.json_game_save = new_data
 
     def export_save(self):
