@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-beta.2"
+version = "V1.0.0-beta.3"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -107,6 +107,15 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.log_message(f"TUPperware Save Editor {version} By SomeSpaceNerd", "INFO")
+
+        # Load the tooltips JSON file
+        try:
+            tooltips_file = open("tooltips.json")
+            self.tooltips = json.load(tooltips_file)
+        except Exception as e:
+            self.log_message(f"Error while loading the tooltips file: {e}", "WARNING")
+            self.tooltips = {} # Assign the tooltips dictionary to an empty one to avoid causing more errors later on
+
         self.ui.cipher_output_check_box.checkStateChanged.connect(self.update_cipher_output_option) # Connect update ciphered output function to the checkbox
         # Connect the load save file button and pressing enter in the line edit to the load save function
         self.ui.load_file_push_button.clicked.connect(self.load_save)
@@ -185,15 +194,27 @@ class MainWindow(QMainWindow):
     # String, Integer, Floating Point, or Boolean parser function
     def parse_str_int_float_bool(self, dict, key):
         self.log_message("Called string/integer/floating point/bool handler", "DEBUG") # Log a debug message
-        item=QTreeWidgetItem([key, str(dict[key])]) # Setup an item
-        item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsDragEnabled|Qt.ItemIsDropEnabled|Qt.ItemIsUserCheckable|Qt.ItemIsEnabled) # Make it editable
+        item = QTreeWidgetItem([key, str(dict[key])]) # Setup an item
+        # Add the appropriate tool tip to the item
+        if key in self.tooltips:
+            item.setToolTip(0, self.tooltips[key][0])
+            item.setToolTip(1, self.tooltips[key][1])
+
+        item.setFlags(
+        Qt.ItemIsSelectable
+        |Qt.ItemIsEditable
+        |Qt.ItemIsDragEnabled
+        |Qt.ItemIsDropEnabled
+        |Qt.ItemIsUserCheckable
+        |Qt.ItemIsEnabled) # Make it editable
+
         return item # Return the item
 
     # List parser function
     def parse_list(self, input_dict, key):
             self.log_message("Called list handler", "DEBUG")
             # Ensure both columns exist: key and placeholder for value
-            item = QTreeWidgetItem([str(key), ""])  # :contentReference[oaicite:0]{index=0}
+            item = QTreeWidgetItem([str(key), ""])
             # Make the node itself editable/draggable/checkable
             item.setFlags(
                 Qt.ItemIsSelectable
@@ -211,6 +232,8 @@ class MainWindow(QMainWindow):
 
                 if isinstance(list_item, (str, int, float, bool)):
                     child_item = QTreeWidgetItem([idx_str, str(list_item)])
+                    if list_item in self.tooltips:
+                        child_item.setToolTip(1, self.tooltips[str(list_item)])
                     # Add editable flag to the leaf
                     child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
                     item.addChild(child_item)
