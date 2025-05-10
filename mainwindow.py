@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-beta.4"
+version = "V1.0.0-beta.4.1"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -345,7 +345,10 @@ class MainWindow(QMainWindow):
             new_data[k] = v
         self.log_message(f"Updated JSON save data is {new_data}", "DEBUG")
         diff = DeepDiff(self.json_game_save, new_data, ignore_order=False)
-        self.log_message(f"Difference between input and output file is {diff}", "INFO")
+        if not diff:
+            self.log_message("Input and output save data is identical", "INFO")
+        else:
+            self.log_message(f"Difference between input and output save data is {diff}", "INFO")
         self.json_game_save = new_data
 
     def export_save(self):
