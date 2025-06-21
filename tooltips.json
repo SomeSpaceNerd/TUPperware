@@ -23,7 +23,7 @@
     "hasDoneLabyrinthSuccessEncounter":["Whether or not you completed the labyrinth success encounter", "True or False"],
 
     "labyrinth":"The labyrinth's ID/Index",
-    "nAttempts":"The nuumber of times you have attempted the labyrinth",
+    "nAttempts":"The number of times you have attempted the labyrinth",
     "completed":"Whether or not you have completed the labyrinth",
 
     "Act1.5041":"Unknown Act 1 scene",
