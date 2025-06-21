@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-beta.4.1"
+version = "V1.0.0-rc.1"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -73,18 +73,20 @@ cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_Leag
     "Ð": "}",
     "ö": "[",
     "ð": "]",
-    u"\u008F": '"', # Note that this is a double quote
+    u"\u008F": '"', # Double quote
     u"\u0097": ":",
-    u"\u008D": " ", # Note that this is a space
+    u"\u008D": " ", # Space
     u"\u0081": ",",
-    "§": "\n"
+    "§": "\n" # Newline
 }
 inv_cipher_table = {v: k for k, v in cipher_table.items()} # Creates an inverted cipher table for re-ciphering the output save file
 
 # Imports
 import sys
+import os
 import logging
 import json
+from pathlib import Path
 from deepdiff import DeepDiff
 from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem, QMessageBox
 from PySide6.QtCore import Qt, QTime
@@ -131,7 +133,7 @@ class MainWindow(QMainWindow):
     def load_save(self):
         try:
             self.input_file_path = self.ui.input_path_line_edit.text()
-            with open(self.input_file_path, "r", encoding = "utf_8") as tl_game_save: # Open the save file
+            with open(file = self.input_file_path, mode = "r", encoding = "utf_8") as tl_game_save: # Open the save file
                 ciphered_save = tl_game_save.read()
                 # Check if the save file is valid
                 if not ciphered_save:
@@ -143,8 +145,7 @@ class MainWindow(QMainWindow):
                 # Decipher the save file
                 self.deciphered_save = "" # Ensure the deciphered save variable is empty
                 for char in ciphered_save:
-                    # THIS SHOULD BE UNCOMMENTED BUT WINDOWS PATHS CAUSE AN ERROR HERE TOO
-                    # QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while loading
+                    QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while loading
 
                     if char in cipher_table:
                         self.deciphered_save = self.deciphered_save + cipher_table.get(char)
@@ -162,8 +163,12 @@ class MainWindow(QMainWindow):
 
         # Catch any errors that may occur while loading the save file
         except Exception as e:
-            self.log_message(f"An error occured while loading the save file: {e}", "ERROR")
-            self.parse_save() # TEMPORARY HACKY FIX BECAUSE WINDOWS PATHS ALWAYS CAUSES ERROR EVEN WHEN THE FILE IS LOADED CORRECTLY
+            if "unterminated string literal" in str(e): # This could cause undefined or incorrect behavior, but it fixes the windows path error for now. "Too bad!" - Valve Devs
+                self.log_message("You have either attempted to load a nonexistant file or a file on a Windows filesystem, the program will continue regardless", "WARNING")
+                self.parse_save()
+            else:
+                self.log_message(f"An error occured while loading the save file: {e}", "ERROR")
+
 
     def parse_save(self):
         try:
