@@ -353,7 +353,7 @@ class MainWindow(QMainWindow):
         if not diff:
             self.log_message("Input and output save data is identical", "INFO")
         else:
-            self.log_message(f"Difference between input and output save data is {diff}", "INFO")
+            self.log_message(f"Difference between input and output save data is diff", "INFO")
         self.json_game_save = new_data
 
     def export_save(self):
