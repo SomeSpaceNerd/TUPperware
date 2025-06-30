@@ -61,6 +61,10 @@ if [ ! -d "venv" ]; then
     fi
 fi
 
+# Define a variable pointing at the venv’s python for absolute certainty
+VENV_PY="$(pwd)/venv/bin/python"
+VENV_PIP="$VENV_PY -m pip"
+
 echo "Activating virtual environment..."
 # shellcheck disable=SC1091
 if ! source venv/bin/activate; then
@@ -68,14 +72,17 @@ if ! source venv/bin/activate; then
     error_exit
 fi
 
+# Override PYTHON_CMD to point at the venv’s interpreter from here on out
+PYTHON_CMD="$VENV_PY"
+
 echo "Upgrading pip in venv..."
-if ! python -m pip install --upgrade pip &>/dev/null; then
+if ! $VENV_PIP install --upgrade pip &>/dev/null; then
     echo "ERROR: Failed to upgrade pip inside venv."
     error_exit
 fi
 
 echo "Installing requirements..."
-if ! python -m pip install -r requirements.txt &>/dev/null; then
+if ! $VENV_PIP install -r requirements.txt &>/dev/null; then
     echo "ERROR: Failed to install requirements."
     error_exit
 fi
@@ -84,6 +91,8 @@ fi
 # 5) Generate UI code
 # ————————————————————————————
 echo "Generating UI code from form.ui..."
+# If the pyside6-uic entry point is only on PATH once the venv is active,
+# this will call the venv’s version.
 if ! pyside6-uic form.ui -o ui_form.py &>/dev/null; then
     echo "ERROR: UI code generation failed."
     error_exit
@@ -93,7 +102,7 @@ fi
 # 6) Launch application
 # ————————————————————————————
 echo "Launching TUPperware..."
-if ! python mainwindow.py; then
+if ! $PYTHON_CMD mainwindow.py; then
     echo "ERROR: Application exited with errors."
     error_exit
 fi

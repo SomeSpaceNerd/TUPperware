@@ -53,15 +53,16 @@ call venv\Scripts\activate.bat >nul 2>&1 || (
     echo ERROR: Could not activate virtual environment.
     goto Error
 )
+set "PYTHON_CMD=%~dp0venv\Scripts\python.exe"
 
 echo Upgrading pip inside venv...
-python -m pip install --upgrade pip >nul 2>&1 || (
+%PYTHON_CMD% -m pip install --upgrade pip >nul 2>&1 || (
     echo ERROR: Failed to upgrade pip in venv.
     goto Error
 )
 
 echo Installing requirements...
-python -m pip install -r requirements.txt >nul 2>&1 || (
+%PYTHON_CMD% -m pip install -r requirements.txt >nul 2>&1 || (
     echo ERROR: Failed to install requirements.
     goto Error
 )
@@ -79,7 +80,7 @@ rem —————————————————————————�
 rem  5) Launch application
 rem ————————————————————————————
 echo Launching TUPperware...
-python mainwindow.py 2>&1 || (
+%PYTHON_CMD% mainwindow.py 2>&1 || (
     echo ERROR: Application exited with errors.
     goto Error
 )

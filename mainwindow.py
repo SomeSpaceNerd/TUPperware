@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-rc.1"
+version = "V1.0.0-rc.2"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -353,7 +353,12 @@ class MainWindow(QMainWindow):
         if not diff:
             self.log_message("Input and output save data is identical", "INFO")
         else:
-            self.log_message(f"Difference between input and output save data is diff", "INFO")
+            diff_dict = diff.to_dict()
+            for path, info in diff_dict.get("values_changed", {}).items():
+                old = info["old_value"]
+                new = info["new_value"]
+                self.log_message(f"Value at {path} changed from {old} -> {new}", "INFO")
+
         self.json_game_save = new_data
 
     def export_save(self):
@@ -372,6 +377,15 @@ class MainWindow(QMainWindow):
                 if result == False:
                     raise Exception("Canceled from warning dialog box")
 
+            elif os.path.exists(self.output_file_path): # Check if the user is exporting to a file that already exists
+                # Show a warning dialog box and see if the user wants to continue
+                result = self.show_warning_dialog("Warning", "You are attempting to export the save data to file that already exists, if you continue it will be overwritten.")
+
+                if result == True:
+                    pass
+                if result == False:
+                    raise Exception("Canceled from warning dialog box")
+
             self.update_json_from_tree()
             export_data = json.dumps(self.json_game_save, indent=4)
 
@@ -379,8 +393,7 @@ class MainWindow(QMainWindow):
             if self.cipher_output == True:
                 output_save = ""
                 for char in export_data:
-                    # THIS SHOULD BE UNCOMMENTED BUT WINDOWS PATHS CAUSE AN ERROR HERE TOO
-                    # QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while exporting
+                    QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while exporting
 
                     if char in inv_cipher_table:
                         output_save = output_save + inv_cipher_table.get(char)
@@ -396,7 +409,7 @@ class MainWindow(QMainWindow):
                 output_save = export_data
 
             # Export the output save file
-            with open(self.ui.output_path_line_edit.text(), "w", encoding = "utf_8") as output_file:
+            with open(self.ui.output_path_line_edit.text(), "w+", encoding = "utf_8") as output_file:
                 self.log_message("Exporting save file...", "INFO")
                 output_file.write(output_save)
                 self.log_message("Save file exported successfully", "INFO")
