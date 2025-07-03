@@ -71,7 +71,7 @@
     "thirdChapterUnlocked":["Whether or not you unlocked the third act/chapter", "True or False"],
     "fourthChapterUnlocked":["Whether or not you unlocked the fourth act/chapter (epilogue)", "True or False"],
 
-    "maskDesign":["Your mask design", "0 = Chevron\n1 = Cyclops\n 2 = Onion\n 3 = Druid\n 4 = Cheese\n 5 = VIP\n 6 = Crob\n 7 = Star\n 8 = Tempest"],
+    "maskDesign":["Your mask design", "0 = Chevron\n1 = Cyclops\n2 = Onion\n3 = Druid\n4 = Cheese\n5 = VIP\n6 = Crob\n7 = Star\n8 = Tempest"],
 
     "hasUsedGiftshopExit":["Whether or not you have used the Giftshop exit before", "True or False"],
 

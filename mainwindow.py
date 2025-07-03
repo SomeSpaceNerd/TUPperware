@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-rc.2"
+version = "V1.0.0-rc.3"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -89,7 +89,7 @@ import json
 from pathlib import Path
 from deepdiff import DeepDiff
 from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem, QMessageBox
-from PySide6.QtCore import Qt, QTime
+from PySide6.QtCore import Qt, QTime, QFile, QIODevice, QTextStream, QStringConverter, QSaveFile
 
 # Important:
 # You need to run the following command to generate the ui_form.py file
@@ -132,34 +132,44 @@ class MainWindow(QMainWindow):
 
     def load_save(self):
         try:
-            self.input_file_path = self.ui.input_path_line_edit.text()
-            with open(file = self.input_file_path, mode = "r", encoding = "utf_8") as tl_game_save: # Open the save file
-                ciphered_save = tl_game_save.read()
-                # Check if the save file is valid
-                if not ciphered_save:
-                    raise Exception("Empty or invalid save file")
+            self.input_file_path = self.ui.input_path_line_edit.text() # Get the input path from the GUI line edit
+            tl_game_save = QFile(self.input_file_path) # Load the input file with QFile
+            if not tl_game_save.open(QIODevice.ReadOnly | QIODevice.Text): # Check if the input file exists
+                raise IOError(f"Cannot open input file: {tl_game_save.errorString()}")
+
+            # Wrap in QTextStream so it can be read with UTF-8
+            stream = QTextStream(tl_game_save)
+            stream.setEncoding(QStringConverter.Encoding.Utf8)
+
+            ciphered_save = stream.readAll() # Read the file
+            stream.flush() # Flush the QTextStream
+            tl_game_save.close() # Close the file
+
+            # Check if the save file is valid
+            if not ciphered_save:
+                raise Exception("Empty or invalid save file")
+            else:
+                self.log_message("Successfully loaded save file", "INFO")
+                self.log_message("Deciphering save file...", "INFO")
+
+            # Decipher the save file
+            self.deciphered_save = "" # Ensure the deciphered save variable is empty
+            for char in ciphered_save:
+                QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while loading
+
+                if char in cipher_table:
+                    self.deciphered_save = self.deciphered_save + cipher_table.get(char)
                 else:
-                    self.log_message("Successfully loaded save file", "INFO")
-                    self.log_message("Deciphering save file...", "INFO")
-
-                # Decipher the save file
-                self.deciphered_save = "" # Ensure the deciphered save variable is empty
-                for char in ciphered_save:
-                    QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while loading
-
-                    if char in cipher_table:
-                        self.deciphered_save = self.deciphered_save + cipher_table.get(char)
+                    self.deciphered_save = self.deciphered_save + char
+                    if char in inv_cipher_table:
+                        self.log_message("Found already deciphered character, ignoring", "INFO")
                     else:
-                        self.deciphered_save = self.deciphered_save + char
-                        if char in inv_cipher_table:
-                            self.log_message("Found already deciphered character, ignoring", "INFO")
-                        else:
-                            self.log_message("Found invalid character in save file", "WARNING")
+                        self.log_message("Found invalid character in save file", "WARNING")
 
 
-                self.log_message("Finished deciphering save file", "INFO")
-                self.log_message(f"Deciphered save data is {self.deciphered_save}", "DEBUG")
-                self.parse_save()
+            self.log_message("Finished deciphering save file", "INFO")
+            self.log_message(f"Deciphered save data is {self.deciphered_save}", "DEBUG")
+            self.parse_save()
 
         # Catch any errors that may occur while loading the save file
         except Exception as e:
@@ -349,7 +359,7 @@ class MainWindow(QMainWindow):
             k, v = self.tree_to_dict(item)
             new_data[k] = v
         self.log_message(f"Updated JSON save data is {new_data}", "DEBUG")
-        diff = DeepDiff(self.json_game_save, new_data, ignore_order=False)
+        diff = DeepDiff(json.loads(self.deciphered_save), new_data, ignore_order=False)
         if not diff:
             self.log_message("Input and output save data is identical", "INFO")
         else:
@@ -409,10 +419,22 @@ class MainWindow(QMainWindow):
                 output_save = export_data
 
             # Export the output save file
-            with open(self.ui.output_path_line_edit.text(), "w+", encoding = "utf_8") as output_file:
-                self.log_message("Exporting save file...", "INFO")
-                output_file.write(output_save)
-                self.log_message("Save file exported successfully", "INFO")
+            self.log_message("Opening output file...", "INFO")
+            output_file = QSaveFile(self.output_file_path) # Load the output file with QFile
+            if not output_file.open(QIODevice.WriteOnly | QIODevice.Text): # Check if the output file exists
+                raise IOError(f"Cannot open output file: {output_file.errorString()}")
+
+            # Wrap in QTextStream so it can be read with UTF-8
+            stream = QTextStream(output_file)
+            stream.setEncoding(QStringConverter.Encoding.Utf8)
+
+            self.log_message("Writing output data to file", "INFO")
+            stream << output_save # Write the output data to the output file
+            stream.flush() # Flush the QTextStream
+
+            if not output_file.commit(): # Check if the save file was written successfully
+                raise IOError(f"Failed to commit output save: {output_file.errorString()}")
+            self.log_message("Save file exported successfully", "INFO")
 
         # Catch any errors that may occur while exporting the save file
         except Exception as e:
