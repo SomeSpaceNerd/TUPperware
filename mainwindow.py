@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-rc.3"
+version = "V1.0.0-rc.4"
 verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -86,7 +86,6 @@ import sys
 import os
 import logging
 import json
-from pathlib import Path
 from deepdiff import DeepDiff
 from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem, QMessageBox
 from PySide6.QtCore import Qt, QTime, QFile, QIODevice, QTextStream, QStringConverter, QSaveFile
@@ -99,11 +98,15 @@ from PySide6.QtCore import Qt, QTime, QFile, QIODevice, QTextStream, QStringConv
 from ui_form import Ui_MainWindow
 
 # Setup the logger
+handler = logging.FileHandler("TUPperware.log", encoding = "utf-8", mode = "w+")
+handler.setFormatter(logging.Formatter(fmt = "%(asctime)s:%(funcName)s:%(levelname)s: %(message)s", datefmt="%H:%M:%S"))
+logger = logging.getLogger("TUPperware")
+logger.addHandler(handler)
+
 if verbose_logging == True:
-    logging.basicConfig(filename= "TUPperware.log", filemode= "w", level= logging.DEBUG, format="%(asctime)s:%(levelname)s:%(name)s: %(message)s", datefmt="%H:%M:%S")
+    logger.setLevel(logging.DEBUG)
 else:
-    logging.basicConfig(filename= "TUPperware.log", filemode= "w", level= logging.INFO, format="%(asctime)s:%(levelname)s:%(name)s: %(message)s", datefmt="%H:%M:%S")
-logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -485,8 +488,7 @@ class MainWindow(QMainWindow):
             print(console_message)
 
         # Log the message to the log file
-        lowercase_log_level = log_level.lower()
-        exec(f"""logger.{lowercase_log_level}("{message}")""")
+        exec(f"""logger.log(logging.{log_level}, "{message}", stacklevel=3)""")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
