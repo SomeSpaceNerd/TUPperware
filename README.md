@@ -1,15 +1,16 @@
 # TUPperware
-A save editor for The Under Presents
+A graphical save editor for The Under Presents
 
 ## Downloading, Usage, and Modification
 This section will tell you how to download, use, and modify the code of the program
 
 ### Download the program
-If you just want to download and use the program, click on the green "Code" button in the top right, then "Download ZIP", then extract the ZIP archive.
+If you just want to download and use the program, click on the green "Code" button in the top right, then "Download ZIP", then extract the ZIP archive.   
+You can also download the ZIP archive of a specific version from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).
 
 If you want to download the program and intend to modify it, install Git on your machine and run the command ``` git clone https://github.com/SomeSpaceNerd/TUPperware.git ```.
 
-### Usage
+### Setup / Launching
 Step 1: Download and install Python 3.12 (or later) for your operating system from [Python's Website](https://www.python.org/downloads/).
 
 Step 2:   
@@ -17,7 +18,16 @@ If you are on Windows, run the ``` TUPperware.bat ``` file to setup and run the 
 
 If you are on Linux or MacOS run the ``` TUPperware.sh ``` file to setup and run the program.
 
-TODO: How to use the program
+### Usage
+#### Importing a save file
+Paste the full path to your TLGameSave or TLGameSettings file into the top line edit, then click the "Load" button or press enter.
+
+#### Modifying a save file
+To modify any value in the save file, double click on it, enter in it's new value, and press enter
+
+#### Exporting a save file
+Enable or disable ciphering the output with the checkbox at the bottom of the GUI   
+Paste the full path to your output TLGameSave or TLGameSettings into the bottom line edit, then click the "Export" button or press enter
 
 ### Modification and Contributing
 This program was made in QT Creator Community Edition 16.0.1 using Python 3.12 and PySide6.
@@ -107,11 +117,208 @@ The game encrypts a JSON file using a substitution cipher with the following key
 | \u0081              | ,                    |
 | §                   | (newline)            |
 
-### Mask Designs
-The player's mask design is stored under cosmetics > maskDesign.  
-The mask design is represented with numbers from 0-9:
+### Tutorial keys:
+#### onboardingProgress
+| Value | State                             |
+|-------|-----------------------------------|
+| 0     | None                              |
+| 1     | UnderVisit_N1_fromHologram        |
+| 2     | UnderVisit_N2_fromDemoShipTableau |
+| 3     | UnderVisit_N3_fromRegularShip     |
+| 4     | ElevatorPuzzleComplete            |
 
-| Number | Mask    |
+#### _desertTutorialCompleteExplicit
+| Value | State                                      |
+|-------|--------------------------------------------|
+| True  | You have completed the desert tutorial     |
+| False | You have not completed the desert tutorial |
+
+#### mcShouldDoPostTableau
+| Value | State                             |
+|-------|-----------------------------------|
+| True  | The MC should do post tableau     |
+| False | The MC should not do post tableau |
+
+#### mcShouldDoPhotoboothReminder
+| Value | State                                        |
+|-------|----------------------------------------------|
+| True  | The MC should do the photobooth reminder     |
+| False | The MC should not do the photobooth reminder |
+
+#### restorationTutorialComplete
+| Value | State                                           |
+|-------|-------------------------------------------------|
+| True  | You have completed the restoration tutorial     |
+| False | You have not completed the restoration tutorial |
+
+#### timeboatTutorialComplete
+| Value | State                                        |
+|-------|----------------------------------------------|
+| True  | You have completed the Timeboat tutorial     |
+| False | You have not completed the Timeboat tutorial |
+
+### photobooth
+#### termsAndConditionsScreenAccepted
+| Value | State                                          |
+|-------|------------------------------------------------|
+| True  | You have accepted the terms and conditions     |
+| False | You have not accepted the terms and conditions |
+
+#### shouldDoTutorial
+| Value | State                                            |
+|-------|--------------------------------------------------|
+| True  | You should do the tutorial on your next trip     |
+| False | You should not do the tutorial on your next trip |
+
+#### timesGoneToShip
+| Value                 | State                                    |
+|-----------------------|------------------------------------------|
+| Positive whole number | How many times you have gone to Timeboat |
+
+#### hasDoneInterludeTwo
+| Value | State                           |
+|-------|---------------------------------|
+| True  | You have done interlude two     |
+| False | You have not done interlude two |
+
+#### hasDoneInterludeThree
+| Value | State                             |
+|-------|-----------------------------------|
+| True  | You have done interlude three     |
+| False | You have not done interlude three |
+
+#### hasDoneInterludeFour
+| Value | State                            |
+|-------|----------------------------------|
+| True  | You have done interlude four     |
+| False | You have not done interlude four |
+
+#### hasDoneInterludeFive
+| Value | State                            |
+|-------|----------------------------------|
+| True  | You have done interlude five     |
+| False | You have not done interlude five |
+
+#### wentToInterludeLastTrip
+| Value | State                                    |
+|-------|------------------------------------------|
+| True  | You went to an interlude last trip       |
+| False | You did not go to an interlude last trip |
+
+#### hasFinishedEpilogue
+| Value | State                              |
+|-------|------------------------------------|
+| True  | You have finished the epilogue     |
+| False | You have not finished the epilogue |
+
+### giftshop
+#### hasDoneFirstGiftshopEncounter
+| Value | State                                          |
+|-------|------------------------------------------------|
+| True  | You have done the first giftshop encounter     |
+| False | You have not done the first giftshop encounter |
+
+#### hasDoneColemanGiftshopEncounter
+| Value | State                                            |
+|-------|--------------------------------------------------|
+| True  | You have done the Coleman giftshop encounter     |
+| False | You have not done the Coleman giftshop encounter |
+
+#### hasDoneLabyrinthSuccessEncounter
+| Value | State                                             |
+|-------|---------------------------------------------------|
+| True  | You have done the labyrinth success encounter     |
+| False | You have not done the labyrinth success encounter |
+
+### shipCharacterInfo
+#### CookSaved
+| Value | State                     |
+|-------|---------------------------|
+| True  | You saved the cook        |
+| False | You did not save the cook |
+
+#### SaraSaved
+| Value | State                 |
+|-------|-----------------------|
+| True  | You saved Sara        |
+| False | You did not save Sara |
+
+#### ColemanSaved
+| Value | State                    |
+|-------|--------------------------|
+| True  | You saved Coleman        |
+| False | You did not save Coleman |
+
+#### CaptainSaved
+| Value | State                        |
+|-------|------------------------------|
+| True  | You saved the Captain        |
+| False | You did not save the Captain |
+
+#### AdelaSaved
+| Value | State                  |
+|-------|------------------------|
+| True  | You saved Adela        |
+| False | You did not save Adela |
+
+#### ThewSaved
+| Value | State                 |
+|-------|-----------------------|
+| True  | You saved Thew        |
+| False | You did not save Thew |
+
+#### RumphSaved
+| Value | State                  |
+|-------|------------------------|
+| True  | You saved Rumph        |
+| False | You did not save Rumph |
+
+#### BillySaved
+| Value | State                  |
+|-------|------------------------|
+| True  | You saved Billy        |
+| False | You did not save Billy |
+
+#### SandySaved
+| Value | State                  |
+|-------|------------------------|
+| True  | You saved Sandy        |
+| False | You did not save Sandy |
+
+#### GeraldSaved
+| Value | State                   |
+|-------|-------------------------|
+| True  | You saved Gerald        |
+| False | You did not save Gerald |
+
+### chapterUnlockInfo
+#### firstChapterUnlocked
+| Value | State                                   |
+|-------|-----------------------------------------|
+| True  | You have unlocked the first chapter     |
+| False | You have not unlocked the first chapter |
+
+#### secondChapterUnlocked
+| Value | State                                    |
+|-------|------------------------------------------|
+| True  | You have unlocked the second chapter     |
+| False | You have not unlocked the second chapter |
+
+#### thirdChapterUnlocked
+| Value | State                                   |
+|-------|-----------------------------------------|
+| True  | You have unlocked the third chapter     |
+| False | You have not unlocked the third chapter |
+
+#### fourthChapterUnlocked
+| Value | State                                    |
+|-------|------------------------------------------|
+| True  | You have unlocked the fourth chapter     |
+| False | You have not unlocked the fourth chapter |
+
+### cosmetics
+#### maskDesign
+| Value  | Mask    |
 |--------|---------|
 | 0      | Chevron |
 | 1      | Cyclops |
@@ -123,12 +330,67 @@ The mask design is represented with numbers from 0-9:
 | 7      | Star    |
 | 8      | Tempest |
 
-**NOTICE: SETTING YOUR MASK DESIGN TO 1 OR 8 (CYCLOPS OR TEMPEST) COULD CAUSE YOU TO GET BANNED BECAUSE THEY ARE NORMALLY UNOBTAINABLE**
+**NOTICE: SETTING YOUR MASK DESIGN TO 1 OR 8 (CYCLOPS OR TEMPEST) COULD CAUSE YOU TO GET BANNED BECAUSE THEY ARE NORMALLY UNOBTAINABLE AS OF THE MOST RECENT VERSION**
 
-### Hats
-The player's hat is stored under persistentHatDesign.   
-The hat is represented with numbers from 0-33:   
+### savedObjectives
+#### hasUsedGiftshopExit
+| Value | State                               |
+|-------|-------------------------------------|
+| True  | You have used the giftshop exit     |
+| False | You have not used the giftshop exit |
 
+#### numberOfAct1ScenesUnlocked
+| Value                 | State                                   |
+|-----------------------|-----------------------------------------|
+| Positive whole number | How many Act 1 scenes you have unlocked |
+
+#### numberOfAct2ScenesUnlocked
+| Value                 | State                                   |
+|-----------------------|-----------------------------------------|
+| Positive whole number | How many Act 2 scenes you have unlocked |
+
+#### numberOfAct3ScenesUnlocked
+| Value                 | State                                   |
+|-----------------------|-----------------------------------------|
+| Positive whole number | How many Act 3 scenes you have unlocked |
+
+### multiplayerToggleInfo
+#### timeOfLastToggle
+| Value                          | State                                                                   |
+|--------------------------------|-------------------------------------------------------------------------|
+| Positive floating point number | The time when you last toggled multiplayer (Unity / C# datetime format) |
+
+### tempestUserFlowData
+#### HasVisitedTempestMarquee
+| Value | State                                    |
+|-------|------------------------------------------|
+| True  | You have visited the Tempest Marquee     |
+| False | You have not visited the Tempest Marquee |
+
+#### HasVisitedTicketPurchaseUI
+| Value | State                                               |
+|-------|-----------------------------------------------------|
+| True  | You have visited the Tempest Ticket Purchase UI     |
+| False | You have not visited the Tempest Ticket Purchase UI |
+
+#### HasSelectedMovementStyle
+| Value | State                                             |
+|-------|---------------------------------------------------|
+| True  | You have selected your Tempest movement style     |
+| False | You have not selected your Tempest movement style |
+
+#### HasAcknowledgedFlashingLightsWarning
+| Value | State                                                         |
+|-------|---------------------------------------------------------------|
+| True  | You have acknowledged the Tempest flashing lights warning     |
+| False | You have not acknowledged the Tempest flashing lights warning |
+
+#### UserMaskBeforeSwap
+| Value                 | State                                         |
+|-----------------------|-----------------------------------------------|
+| Positive whole number | Your mask before swapping to the Tempest mask |
+
+### persistentHatDesign
 | Number | Hat               |
 |--------|-------------------|
 | 0      | None              |
@@ -166,11 +428,46 @@ The hat is represented with numbers from 0-33:
 | 32     | Bow Hat           |
 | 33     | Boot Hat          |
 
+**NOTICE: SETTING YOUR HAT TO 3 OR 4 (FLOWER CROWN OR RUFFLES) COULD CAUSE YOU TO GET BANNED BECAUSE THEY ARE NORMALLY UNOBTAINABLE AS OF THE MOST RECENT VERSION**
+
+### TLGameSettings
+#### singlePlayerOfflineMode
+| Value | State                                    |
+|-------|------------------------------------------|
+| True  | Single player / offline mode is enabled  |
+| False | Single player / offline mode is disabled |
+
+#### swapGrabAndSnapButtons
+| Value | State                                 |
+|-------|---------------------------------------|
+| True  | Grab and snap buttons are swapped     |
+| False | Grab ans snap buttons are not swapped |
+
+#### use24HourTime
+| Value | State                |
+|-------|----------------------|
+| True  | 24-Hour time is used |
+| False | 12-Hour time is used |
+
+#### scrunchStyle
+| Value                 | State              |
+|-----------------------|--------------------|
+| Positive whole number | Your scrunch style |
+
+#### strafeEnabled
+| Value | State                |
+|-------|----------------------|
+| True  | Strafing is enabled  |
+| False | Strafing is disabled |
+
 ## Known glitches and issues:
 This section outlines the known issues that can occur from loading a modified save into the game.
 
 1. Setting your mask design to 1 (Cyclops), or any number outside of the 0-9 range causes it to render without a front mesh (effectively being transparent from the front) and can cause other strange issues like players becoming invisible, or game crashes.
 2. Setting your mask design to 5 (VIP) and going into the Timeboat photobooth without 100%ing Timeboat will result in you being stuck in the limbo/interlude room with the photobooth displaying the "1" texture on it's screen. In this glitched state, you are able to take your mask out of the tray and do magic.
+
+## Special thanks
+Thank you to reddit user u/Elegant_League_7367 for proposing the idea of a save editor and for help testing it   
 
 ## Disclaimer
 
@@ -180,3 +477,5 @@ This software is provided solely for educational and research purposes. It is in
 
 By using this software, you agree that you do so at your own risk. The author is not responsible for any loss of save data, in-game progress, or consequences such as account suspension, banning, or any other penalties that may result from its use.
 
+
+While this tool has not cause any account to be banned from online features in it's testing, the possibility of that occurring CANNOT be ruled out

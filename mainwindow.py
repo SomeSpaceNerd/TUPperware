@@ -1,7 +1,7 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0-rc.4"
-verbose_logging = True # If set to true, the program will log more information that may be useful for debugging
+version = "V1.0.0"
+verbose_logging = False # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
     "Ì": "a",
@@ -113,6 +113,8 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        logger.log(logging.INFO, "       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@                        @@@@@@\n    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@@                      @@@@@@\n  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@                @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@@               @@@@@@\n@@@@@@@                                                      @@@@@@@@@@ @@@@@@@@@             @@@@@@\n@@@@@@@@                                                    @@@@@@@@@@@   @@@@@@@@@           @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@@@@@@         @@@@@@\n   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@       @@@@@@\n     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@         @@@@@@@@@     @@@@@@\n                           @@@@@@@@@@@@@                         @@@@@@           @@@@@@@@@   @@@@@@\n                             @@@@@@@@@@                          @@@@@@             @@@@@@@@  @@@@@@\n                             @@@@@@@@@@                          @@@@@@              @@@@@@@@@@@@@@@\n                             @@@@@@@@@@                          @@@@@@                @@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      @@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                        @@@@ ", stacklevel=1)
+        print("       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@                        @@@@@@\n    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@@                      @@@@@@\n  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@                @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@@               @@@@@@\n@@@@@@@                                                      @@@@@@@@@@ @@@@@@@@@             @@@@@@\n@@@@@@@@                                                    @@@@@@@@@@@   @@@@@@@@@           @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@@@@@@         @@@@@@\n   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@       @@@@@@\n     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@         @@@@@@@@@     @@@@@@\n                           @@@@@@@@@@@@@                         @@@@@@           @@@@@@@@@   @@@@@@\n                             @@@@@@@@@@                          @@@@@@             @@@@@@@@  @@@@@@\n                             @@@@@@@@@@                          @@@@@@              @@@@@@@@@@@@@@@\n                             @@@@@@@@@@                          @@@@@@                @@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      @@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                        @@@@ ")
         self.log_message(f"TUPperware Save Editor {version} By SomeSpaceNerd", "INFO")
 
         # Load the tooltips JSON file
@@ -124,14 +126,16 @@ class MainWindow(QMainWindow):
             self.tooltips = {} # Assign the tooltips dictionary to an empty one to avoid causing more errors later on
 
         self.ui.cipher_output_check_box.checkStateChanged.connect(self.update_cipher_output_option) # Connect update ciphered output function to the checkbox
+
         # Connect the load save file button and pressing enter in the line edit to the load save function
         self.ui.load_file_push_button.clicked.connect(self.load_save)
         self.ui.input_path_line_edit.returnPressed.connect(self.load_save)
+
         # Connect the export save fule button and pressing enter in the line edit to the export save function
         self.ui.export_push_button.clicked.connect(self.export_save)
         self.ui.output_path_line_edit.returnPressed.connect(self.export_save)
         self.deciphered_save = "" # Define an empty deciphered save varible for other functions
-        self.cipher_output = True # Define the default cipher output becuase the checkbox functions only update when its clicked
+        self.cipher_output = True # Define the default cipher output becuase the checkbox functions only update when it's clicked
 
     def load_save(self):
         try:
@@ -157,69 +161,70 @@ class MainWindow(QMainWindow):
 
             # Decipher the save file
             self.deciphered_save = "" # Ensure the deciphered save variable is empty
-            for char in ciphered_save:
+            for char in ciphered_save: # Loop through the characters in the save file
                 QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while loading
 
-                if char in cipher_table:
-                    self.deciphered_save = self.deciphered_save + cipher_table.get(char)
+                if char in cipher_table: # Check if the character is in the cipher table
+                    self.deciphered_save = self.deciphered_save + cipher_table.get(char) # Decipher it if it is
                 else:
                     self.deciphered_save = self.deciphered_save + char
-                    if char in inv_cipher_table:
-                        self.log_message("Found already deciphered character, ignoring", "INFO")
-                    else:
-                        self.log_message("Found invalid character in save file", "WARNING")
+                    if char in inv_cipher_table: # Check if the character is already deciphered
+                        self.log_message("Found already deciphered character, ignoring", "INFO") # Ignore it
+                    else: # Check if the file is invalid/unknown
+                        self.log_message("Found invalid character in save file", "WARNING") # Ignore it and log a warning
 
 
             self.log_message("Finished deciphering save file", "INFO")
             self.log_message(f"Deciphered save data is {self.deciphered_save}", "DEBUG")
-            self.parse_save()
+            self.parse_save() # Call the save parser after deciphering it
 
-        # Catch any errors that may occur while loading the save file
-        except Exception as e:
+        except Exception as e: # Catch any errors that may occur while loading the save file
             if "unterminated string literal" in str(e): # This could cause undefined or incorrect behavior, but it fixes the windows path error for now. "Too bad!" - Valve Devs
                 self.log_message("You have either attempted to load a nonexistant file or a file on a Windows filesystem, the program will continue regardless", "WARNING")
                 self.parse_save()
             else:
                 self.log_message(f"An error occured while loading the save file: {e}", "ERROR")
 
-
-    def parse_save(self):
+    def parse_save(self): # Save parsing and loading into GUI function
         try:
             self.log_message("Parsing save file...", "INFO")
             self.json_game_save = json.loads(self.deciphered_save) # Load the save as JSON
             self.ui.save_tree_widget.clear() # Clear the tree widget
             items = []
-            for key in self.json_game_save:
+
+            for key in self.json_game_save: # Loop through every key in the save file
                 self.log_message(f"Parsing key {key}", "DEBUG")
                 value = self.json_game_save[key]
 
-                if isinstance(value, (str, int, float, bool)):
-                    self.log_message("Key is str/int/bool", "DEBUG")
-                    items.append(self.parse_str_int_float_bool(self.json_game_save, key))
+                if isinstance(value, (str, int, float, bool)): # Check if that key's value is a string, integer, floating point number, or boolean
+                    self.log_message("Key is str/int/float/bool", "DEBUG")
+                    items.append(self.parse_str_int_float_bool(self.json_game_save, key)) # Call the str/int/float/bool handler and append it's output to the item list
 
-                if isinstance(value, list):
+                if isinstance(value, list): # Check if the key's value is a list
                     self.log_message("Key is list", "DEBUG")
-                    items.append(self.parse_list(self.json_game_save, key))
+                    items.append(self.parse_list(self.json_game_save, key)) # Call the list handler and append it's output to the item list
 
-                if isinstance(value, dict):
+                if isinstance(value, dict): # Check if the key's value is a dictionary
                     self.log_message("Key is dict", "DEBUG")
-                    items.append(self.parse_dict(self.json_game_save, key))
+                    items.append(self.parse_dict(self.json_game_save, key)) # Call the dictionary handler and append it's output to the item list
 
-            self.ui.save_tree_widget.insertTopLevelItems(0, items)
+            self.ui.save_tree_widget.insertTopLevelItems(0, items) # Update the GUI with the items
 
-        except Exception as e:
+        except Exception as e: # Catch any errors that may occur while parsing the save file
             self.log_message(f"An error occured while parsing the save file: {e}", "ERROR")
 
     # These functions parse through a dictionary and key and return a QTreeListItem
     # String, Integer, Floating Point, or Boolean parser function
     def parse_str_int_float_bool(self, dict, key):
-        self.log_message("Called string/integer/floating point/bool handler", "DEBUG") # Log a debug message
+        self.log_message("Called string/integer/float/bool handler", "DEBUG")
         item = QTreeWidgetItem([key, str(dict[key])]) # Setup an item
+
         # Add the appropriate tool tip to the item
         if key in self.tooltips:
             item.setToolTip(0, self.tooltips[key][0])
             item.setToolTip(1, self.tooltips[key][1])
 
+        # Set the item's flags
         item.setFlags(
         Qt.ItemIsSelectable
         |Qt.ItemIsEditable
@@ -233,8 +238,7 @@ class MainWindow(QMainWindow):
     # List parser function
     def parse_list(self, input_dict, key):
             self.log_message("Called list handler", "DEBUG")
-            # Ensure both columns exist: key and placeholder for value
-            item = QTreeWidgetItem([str(key), ""])
+            item = QTreeWidgetItem([str(key), ""]) # Ensure both columns exist: key and placeholder for value
             # Make the node itself editable/draggable/checkable
             item.setFlags(
                 Qt.ItemIsSelectable
@@ -245,16 +249,17 @@ class MainWindow(QMainWindow):
                 | Qt.ItemIsEnabled
             )
 
-            data_list = input_dict[key]
+            data_list = input_dict[key] # Get the input list
 
-            if not data_list:
+            if not data_list: # If it is empty, set it to a placeholder empty value
                 item = QTreeWidgetItem([str(key), "[EMPTY LIST]"])
             else:
-                for index, list_item in enumerate(data_list):
+                for index, list_item in enumerate(data_list): # Loop through every item in the list
                     self.log_message(f"Index {index} is {list_item}", "DEBUG")
                     idx_str = str(index)
 
-                    if isinstance(list_item, (str, int, float, bool)):
+                    if isinstance(list_item, (str, int, float, bool)): # If the item is a string, integer, floating point number, or boolean, call the str/float/int/bool handler
+                        # Add the result of the handler as a child item
                         child_item = QTreeWidgetItem([idx_str, str(list_item)])
                         if list_item in self.tooltips:
                             child_item.setToolTip(1, self.tooltips[str(list_item)])
@@ -262,23 +267,24 @@ class MainWindow(QMainWindow):
                         child_item.setFlags(child_item.flags() | Qt.ItemIsEditable)
                         item.addChild(child_item)
 
-                    elif isinstance(list_item, list):
+                    elif isinstance(list_item, list): # If the item is a list, call the list handler
                         # Use the actual index as the key to avoid duplicates
                         temp_dict = {idx_str: list_item}
                         nested_item = self.parse_list(temp_dict, idx_str)
-                        item.addChild(nested_item)
+                        item.addChild(nested_item) # Add the result of the handler as a child item
 
-                    elif isinstance(list_item, dict):
+                    elif isinstance(list_item, dict): # If the item is a dictionary, call the dictionary handler
                         temp_dict = {idx_str: list_item}
                         nested_item = self.parse_dict(temp_dict, idx_str)
-                        item.addChild(nested_item)
+                        item.addChild(nested_item) # Add the result of the handler as a child item
 
-            return item
+            return item # Return the item
 
+    # Dictionary parsing function
     def parse_dict(self, base_dict, base_key):
         self.log_message("Called dict handler", "DEBUG")
-        # Ensure both columns exist
-        item = QTreeWidgetItem([str(base_key), ""])
+        item = QTreeWidgetItem([str(base_key), ""]) # Ensure both columns exist
+        # Set the item's flags
         item.setFlags(
             Qt.ItemIsSelectable
             | Qt.ItemIsEditable
@@ -288,17 +294,17 @@ class MainWindow(QMainWindow):
             | Qt.ItemIsEnabled
         )
 
-        dictionary = base_dict[base_key]
-        for key, value in dictionary.items():
+        dictionary = base_dict[base_key] # Get the input dictionary
+        for key, value in dictionary.items(): # Loop through every key/value pair in the dictionary
             self.log_message(f"Parsing sub key {key}", "DEBUG")
-            if isinstance(value, (str, int, float, bool)):
-                item.addChild(self.parse_str_int_float_bool(dictionary, key))
-            elif isinstance(value, list):
-                item.addChild(self.parse_list({key: value}, key))
-            elif isinstance(value, dict):
-                item.addChild(self.parse_dict({key: value}, key))
+            if isinstance(value, (str, int, float, bool)): # Check if the key's value is a string, integer, floating point number or boolean
+                item.addChild(self.parse_str_int_float_bool(dictionary, key)) # Call the srt/int/float/bool handler and add it's result as a child item
+            elif isinstance(value, list): # Check if the key's value is a list
+                item.addChild(self.parse_list({key: value}, key)) # Call the list handler and add it's result as a child item
+            elif isinstance(value, dict): # Check if the key's value is a dictionary
+                item.addChild(self.parse_dict({key: value}, key)) # Call the dictionary handler and add it's result as a child item
 
-        return item
+        return item # Return the item
 
     # Helper functions for exporting the modified save file
     # Converts the QTreeWidget data to JSON
@@ -307,11 +313,12 @@ class MainWindow(QMainWindow):
         self.log_message(f"Called tree to dictionary with tree item: {tree_item}", "DEBUG")
         self.log_message(f"Item has {child_count} children", "DEBUG")
 
-        if child_count == 0:
-            # Leaf node
+        if child_count == 0: # Check if the item is a leaf node (has no child items)
             key = tree_item.text(0)
             value = tree_item.text(1)
             value_lower = value.strip().lower()
+
+            # Convert the srting value of the node into the correct data type
             if value_lower == "true":
                 return key, True
             elif value_lower == "false":
@@ -328,7 +335,7 @@ class MainWindow(QMainWindow):
         else:
             key = tree_item.text(0)
 
-            # Determine if it's a list: all children have numeric keys (like "0", "1", "2", ...)
+            # Check if the node is a list based on it's key values (if it's a list they are ordered numbers 1, 2, 3...)
             is_list = True
             for i in range(child_count):
                 child_key = tree_item.child(i).text(0)
@@ -345,8 +352,8 @@ class MainWindow(QMainWindow):
                     _, value = self.tree_to_dict(child)
                     result_list[index] = value
                 return key, result_list
-            else:
-                # Normal dictionary
+
+            else: # The node is a dictionary
                 d = {}
                 for i in range(child_count):
                     k, v = self.tree_to_dict(tree_item.child(i))
@@ -356,31 +363,34 @@ class MainWindow(QMainWindow):
     # Updates the main JSON game save variable from the QTreeWidget
     def update_json_from_tree(self):
         self.log_message("Updating JSON save variable from tree", "DEBUG")
-        new_data = {}
-        for i in range(self.ui.save_tree_widget.topLevelItemCount()):
-            item = self.ui.save_tree_widget.topLevelItem(i)
-            k, v = self.tree_to_dict(item)
-            new_data[k] = v
+        new_data = {} # Setup an empty dictionary for the new data
+        for i in range(self.ui.save_tree_widget.topLevelItemCount()): # Loop through every item in the QTreeWidget
+            item = self.ui.save_tree_widget.topLevelItem(i) # Get the top level item
+            k, v = self.tree_to_dict(item) # Parse the item and get it's key/value
+            new_data[k] = v # Append the item's data to the new dictionary
         self.log_message(f"Updated JSON save data is {new_data}", "DEBUG")
+
+        # Check if the new save data is different from the input save data
         diff = DeepDiff(json.loads(self.deciphered_save), new_data, ignore_order=False)
         if not diff:
             self.log_message("Input and output save data is identical", "INFO")
         else:
             diff_dict = diff.to_dict()
-            for path, info in diff_dict.get("values_changed", {}).items():
+            for path, info in diff_dict.get("values_changed", {}).items(): # Loop through and format the DeepDiff output
                 old = info["old_value"]
                 new = info["new_value"]
                 self.log_message(f"Value at {path} changed from {old} -> {new}", "INFO")
 
-        self.json_game_save = new_data
+        self.json_game_save = new_data # Set the global save data variable to the new save data
 
+    # Function to export the save file
     def export_save(self):
         try:
             # Check if a save file has been loaded
             if not self.deciphered_save:
                 raise Exception("You have not loaded a save file yet")
 
-            self.output_file_path = self.ui.output_path_line_edit.text()
+            self.output_file_path = self.ui.output_path_line_edit.text() # Get the output file path from the GUI
             if self.input_file_path == self.output_file_path: # Check if the user is exporting to the same file they imported from
                 # Show a warning dialog box and see if the user wants to continue
                 result = self.show_warning_dialog("Warning", "You are attempting to export the save data to the same file you imported it from. This is highly not reccomended unless you have a seperate backup of your input save.\nIgnoring this warning could cause irrecoverable issues in-game.")
@@ -399,18 +409,18 @@ class MainWindow(QMainWindow):
                 if result == False:
                     raise Exception("Canceled from warning dialog box")
 
-            self.update_json_from_tree()
-            export_data = json.dumps(self.json_game_save, indent=4)
+            self.update_json_from_tree() # Update the save data JSON from the GUI
+            export_data = json.dumps(self.json_game_save, indent=4) # Format the output data correctly
 
-            # Cipher the output if it is enables
+            # Cipher the output if it is enabled
             if self.cipher_output == True:
                 output_save = ""
                 for char in export_data:
                     QApplication.processEvents() # Stop the GUI from hanging and appearing crashed while exporting
 
-                    if char in inv_cipher_table:
-                        output_save = output_save + inv_cipher_table.get(char)
-                    else:
+                    if char in inv_cipher_table: # Loop through the inverted cipher table
+                        output_save = output_save + inv_cipher_table.get(char) # Append the ciphered character to the output save data
+                    else: # If the character is invalid/already ciphered
                         output_save = output_save + char
                         if char in cipher_table:
                             self.log_message("Found already ciphered character, ignoring", "WARNING")
@@ -427,7 +437,7 @@ class MainWindow(QMainWindow):
             if not output_file.open(QIODevice.WriteOnly | QIODevice.Text): # Check if the output file exists
                 raise IOError(f"Cannot open output file: {output_file.errorString()}")
 
-            # Wrap in QTextStream so it can be read with UTF-8
+            # Wrap in QTextStream so it can be exported with UTF-8
             stream = QTextStream(output_file)
             stream.setEncoding(QStringConverter.Encoding.Utf8)
 
@@ -446,18 +456,18 @@ class MainWindow(QMainWindow):
     def show_warning_dialog(self, title, text):
         # Create the message box
         msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Warning)          # Set warning icon
-        msg_box.setWindowTitle(title)              # Window title
-        msg_box.setText(text)  # Main text
+        msg_box.setIcon(QMessageBox.Warning) # Set warning icon
+        msg_box.setWindowTitle(title) # Set window title
+        msg_box.setText(text) # Main text
 
         # Add custom buttons
         proceed_button = msg_box.addButton("Continue", QMessageBox.AcceptRole)
         cancel_button = msg_box.addButton("Cancel", QMessageBox.RejectRole)
 
-        msg_box.setDefaultButton(cancel_button)        # Default focus on Cancel
-        msg_box.setEscapeButton(cancel_button)         # Hitting Esc triggers Cancel
+        msg_box.setDefaultButton(cancel_button) # Default focus on Cancel
+        msg_box.setEscapeButton(cancel_button) # Hitting Esc triggers Cancel
 
-        msg_box.exec()  # Open as a **modal** dialog
+        msg_box.exec()  # Open as a modal dialog so it cannot be closed
 
         # Determine which button was clicked
         if msg_box.clickedButton() == proceed_button:
@@ -467,7 +477,7 @@ class MainWindow(QMainWindow):
             self.log_message("Aborting operation", "DEBUG")
             return False
 
-    # Function to enable/disable ciphering the output depending on the UI checkbox
+    # Function to enable/disable ciphering the output depending on the GUI checkbox
     def update_cipher_output_option(self, state):
         if state == Qt.Checked:
             self.cipher_output = True
@@ -490,8 +500,11 @@ class MainWindow(QMainWindow):
         # Log the message to the log file
         exec(f"""logger.log(logging.{log_level}, "{message}", stacklevel=3)""")
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    widget = MainWindow()
-    widget.show()
-    sys.exit(app.exec())
+
+
+
+if __name__ == "__main__": # If the program is being run as main
+    app = QApplication(sys.argv) # Setup the QApplication
+    widget = MainWindow() # Setup the GUI
+    widget.show() # Show the GUI
+    sys.exit(app.exec()) # Execute all of the associated code and exit when closed
