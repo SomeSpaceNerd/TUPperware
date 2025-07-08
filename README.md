@@ -478,4 +478,4 @@ This software is provided solely for educational and research purposes. It is in
 By using this software, you agree that you do so at your own risk. The author is not responsible for any loss of save data, in-game progress, or consequences such as account suspension, banning, or any other penalties that may result from its use.
 
 
-While this tool has not cause any account to be banned from online features in it's testing, the possibility of that occurring CANNOT be ruled out
+While this tool has not caused any account to be banned from online features in it's testing, the possibility of that occurring CANNOT be ruled out
