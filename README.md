@@ -19,6 +19,17 @@ If you are on Windows, run the ``` TUPperware.bat ``` file to setup and run the 
 If you are on Linux or MacOS run the ``` TUPperware.sh ``` file to setup and run the program.
 
 ### Usage
+#### Finding your save files
+On Windows your save files are located in your user's appdata folder under ```LocalLow\Tender Claws\The Under Presents```   
+You can open your AppData folder by pressing Win+R and running ```%USERPROFILE%\AppData```
+
+On Quest your save files are located in ```sdcard/Android/Data/com.TenderClaws.TheUnderPresents.Quest/files```   
+You can access that directory and download/upload your save files using [Sidequest](https://sidequestvr.com/download)
+
+Download or copy/paste your save files into a folder like your documents folder so the program can access them.
+
+**PLEASE MAKE UNMODIFIED BACKUPS OF YOUR SAVE FILES BEFORE MODIFYING THEM**
+
 #### Importing a save file
 Paste the full path to your TLGameSave or TLGameSettings file into the top line edit, then click the "Load" button or press enter.
 
@@ -30,7 +41,7 @@ Enable or disable ciphering the output with the checkbox at the bottom of the GU
 Paste the full path to your output TLGameSave or TLGameSettings into the bottom line edit, then click the "Export" button or press enter
 
 ### Modification and Contributing
-This program was made in QT Creator Community Edition 16.0.1 using Python 3.12 and PySide6.
+This program was made in QT Creator Community Edition 16.0.2 using Python 3.12 and PySide6.
 
 I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss).   
 However, you can modify the mainwindow.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator.
@@ -105,6 +116,7 @@ The game encrypts a JSON file using a substitution cipher with the following key
 | \u009A              | 7                    |
 | \u0095              | 8                    |
 | \u0094              | 9                    |
+| \u0080              | -                    |
 | \u0083              | .                    |
 | ò                   | _                    |
 | Ö                   | {                    |
@@ -340,19 +352,19 @@ The game encrypts a JSON file using a substitution cipher with the following key
 | False | You have not used the giftshop exit |
 
 #### numberOfAct1ScenesUnlocked
-| Value                 | State                                   |
-|-----------------------|-----------------------------------------|
-| Positive whole number | How many Act 1 scenes you have unlocked |
+| Value                             | State                                                                  |
+|-----------------------------------|------------------------------------------------------------------------|
+| Positive or negative whole number | How many Act 1 scenes you have unlocked (-1 is none/tutorial/free demo)|
 
 #### numberOfAct2ScenesUnlocked
-| Value                 | State                                   |
-|-----------------------|-----------------------------------------|
-| Positive whole number | How many Act 2 scenes you have unlocked |
+| Value                             | State                                                                  |
+|-----------------------------------|------------------------------------------------------------------------|
+| Positive or negative whole number | How many Act 2 scenes you have unlocked (-1 is none/tutorial/free demo)|
 
 #### numberOfAct3ScenesUnlocked
-| Value                 | State                                   |
-|-----------------------|-----------------------------------------|
-| Positive whole number | How many Act 3 scenes you have unlocked |
+| Value                             | State                                                                  |
+|-----------------------------------|------------------------------------------------------------------------|
+| Positive or negative whole number | How many Act 3 scenes you have unlocked (-1 is none/tutorial/free demo)|
 
 ### multiplayerToggleInfo
 #### timeOfLastToggle

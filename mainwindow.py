@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.0.0"
+version = "V1.1.0"
 verbose_logging = False # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -55,7 +55,7 @@ cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_Leag
     "õ": "X",
     "Ô": "y",
     "ô": "Y",
-    "Z": "Z", # Never used in the game's save system (to the best of my knowledge)
+    "Z": "Z", # Never used in the game's save system (to the best of my knowledge) # Placeholer for PC save files
     u"\u009D": "0", # Correct (I think)
     u"\u009C": "1", # Correct
     u"\u009F": "2", # Correct
@@ -67,6 +67,7 @@ cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_Leag
     u"\u0095": "8", # Correct
     u"\u0094": "9", # Possibly a number, best guess
     #u"\u0096": "10", # Possibly a number, was in my save file before but now isnt (?), placeholder
+    u"\u0080": "-", # Used in numbers
     u"\u0083": ".", # Used in numbers
     "ò": "_", # Used as a prefix or seperator in strings ("_desertTutorialCompleteExplicit", "TUTORIAL_RewindOrFastforward"), likely an artifact from Newtonsoft JSON
     "Ö": "{",
