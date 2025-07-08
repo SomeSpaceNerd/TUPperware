@@ -5,7 +5,7 @@ A graphical save editor for The Under Presents
 This section will tell you how to download, use, and modify the code of the program
 
 ### Download the program
-If you just want to download and use the program, download the archive from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).
+If you just want to download and use the program, download and extract the archive from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).
 
 If you want to download the program and intend to modify it, install Git on your machine and run the command ``` git clone https://github.com/SomeSpaceNerd/TUPperware.git ```.
 
