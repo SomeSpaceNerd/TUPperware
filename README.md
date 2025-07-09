@@ -37,6 +37,8 @@ To modify any value in the save file, double click on it, enter in it's new valu
 
 #### Exporting a save file
 Enable or disable ciphering the output with the checkbox at the bottom of the GUI   
+Ciphering the output is required if you want to load the modified save in-game
+
 Paste the full path to your output TLGameSave or TLGameSettings into the bottom line edit, then click the "Export" button or press enter
 
 ### Modification and Contributing
