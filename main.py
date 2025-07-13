@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.2.0"
+version = "V1.2.1"
 verbose_logging = False # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/

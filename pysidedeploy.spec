@@ -8,7 +8,7 @@ title = TUPperware
 project_dir = .
 
 # source file path
-input_file = C:\Users\Will\Documents\GitHub\TUPperware\main.py
+input_file = main.py
 
 # directory where exec is stored
 exec_directory = .
@@ -22,7 +22,7 @@ icon = img/TUPperware_logo.png
 [python]
 
 # python path
-python_path = C:\Users\Will\Documents\GitHub\TUPperware\venv\Scripts\python.exe
+python_path = 
 
 # python packages to install
 packages = Nuitka==2.4.8,imageio==2.37.0,dictdiffer
@@ -40,7 +40,7 @@ qml_files =
 excluded_qml_plugins = 
 
 # qt modules used. comma separated
-modules = Core,Widgets,Gui
+modules = Gui,Widgets,Core
 
 # qt plugins used by the application
 plugins = platforms,styles,imageformats,accessiblebridge,iconengines,xcbglintegrations,platforms/darwin,platformthemes,egldeviceintegrations,platforminputcontexts,generic

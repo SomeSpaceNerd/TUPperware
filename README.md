@@ -5,7 +5,8 @@ A graphical save editor for The Under Presents
 This section will tell you how to download, use, and modify the code of the program
 
 ### Downloading and Launching the Program
-You can download the latest executable from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).
+You can download the latest release ZIP file (TUPperware_Vx.y.z.zip) from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).   
+Unzip and run ```TUPperware.exe``` to launch the program
 
 ### Usage
 #### Finding your save files
@@ -36,7 +37,8 @@ This section only applies if you want to download the source code and make modif
 
 To download the program's source code, please install git and use the command ```git clone https://github.com/SomeSpaceNerd/TUPperware.git```
 
-To build an executable file from the source code, install PySide6.8.3 using pip and then run the command ```pyside6-deploy -c pysidedeploy.spec``` inside the source directory
+To build an executable file from the source code, install PySide6.8.3 using pip and then run the command ```pyside6-deploy -c pysidedeploy.spec``` inside the source directory   
+Sometimes pyside6-deploy replaces relative paths (like main.py) with full paths (like /home/user/TUPperware/main.py), or adds to empty paths like the python directory in pysidedeploy.spec, please make sure you convert them back before committing to the repository.
 
 This program was made in QT Creator Community Edition 16.0.2 using Python 3.12 and PySide6.8.3   
 I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss).   
