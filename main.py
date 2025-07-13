@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.1.0"
+version = "V1.2.0"
 verbose_logging = False # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -85,18 +85,27 @@ inv_cipher_table = {v: k for k, v in cipher_table.items()} # Creates an inverted
 # Imports
 import sys
 import os
+import platform
+import importlib
 import logging
 import json
-from deepdiff import DeepDiff
+from dictdiffer import diff
 from PySide6.QtWidgets import QApplication, QMainWindow, QTreeWidget, QTreeWidgetItem, QMessageBox
-from PySide6.QtCore import Qt, QTime, QFile, QIODevice, QTextStream, QStringConverter, QSaveFile
+from PySide6.QtCore import Qt, QTime, QFile, QIODevice, QTextStream, QStringConverter, QSaveFile, QOperatingSystemVersion
 
 # Important:
-# You need to run the following command to generate the ui_form.py file
+# You need to run the following commands to generate the ui_form.py files
 #     pyside6-uic form.ui -o ui_form.py
-#     The install/execution scripts and QT Creator handle this for you
+#     pyside6-uic form_android.ui -o ui_form_android.py
 
-from ui_form import Ui_MainWindow
+from ui_form       import Ui_MainWindow as Ui_Desktop_MainWindow
+from ui_form_android import Ui_MainWindow as Ui_Android_MainWindow
+
+# Platform detection
+IS_NUITKA = "__compiled__" in globals()
+IS_ANDROID = (QOperatingSystemVersion.currentType() == QOperatingSystemVersion.Android)
+
+Ui_MainWindow = Ui_Android_MainWindow if IS_ANDROID else Ui_Desktop_MainWindow # Set the mainwindow depending on the platform
 
 # Setup the logger
 handler = logging.FileHandler("TUPperware.log", encoding = "utf-8", mode = "w+")
@@ -114,9 +123,10 @@ class MainWindow(QMainWindow):
         super().__init__(parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        logger.log(logging.INFO, "       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@                        @@@@@@\n    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@@                      @@@@@@\n  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@                @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@@               @@@@@@\n@@@@@@@                                                      @@@@@@@@@@ @@@@@@@@@             @@@@@@\n@@@@@@@@                                                    @@@@@@@@@@@   @@@@@@@@@           @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@@@@@@         @@@@@@\n   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@       @@@@@@\n     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@         @@@@@@@@@     @@@@@@\n                           @@@@@@@@@@@@@                         @@@@@@           @@@@@@@@@   @@@@@@\n                             @@@@@@@@@@                          @@@@@@             @@@@@@@@  @@@@@@\n                             @@@@@@@@@@                          @@@@@@              @@@@@@@@@@@@@@@\n                             @@@@@@@@@@                          @@@@@@                @@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      @@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                        @@@@ ", stacklevel=1)
-        print("       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@                        @@@@@@\n    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@@                      @@@@@@\n  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@                @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@@               @@@@@@\n@@@@@@@                                                      @@@@@@@@@@ @@@@@@@@@             @@@@@@\n@@@@@@@@                                                    @@@@@@@@@@@   @@@@@@@@@           @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@@@@@@         @@@@@@\n   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@       @@@@@@\n     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@         @@@@@@@@@     @@@@@@\n                           @@@@@@@@@@@@@                         @@@@@@           @@@@@@@@@   @@@@@@\n                             @@@@@@@@@@                          @@@@@@             @@@@@@@@  @@@@@@\n                             @@@@@@@@@@                          @@@@@@              @@@@@@@@@@@@@@@\n                             @@@@@@@@@@                          @@@@@@                @@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      @@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                        @@@@ ")
+        if IS_ANDROID == False: print("       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@                        @@@@@@\n    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@@                      @@@@@@\n  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@                @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@@               @@@@@@\n@@@@@@@                                                      @@@@@@@@@@ @@@@@@@@@             @@@@@@\n@@@@@@@@                                                    @@@@@@@@@@@   @@@@@@@@@           @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@@@@@@         @@@@@@\n   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@       @@@@@@\n     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@         @@@@@@@@@     @@@@@@\n                           @@@@@@@@@@@@@                         @@@@@@           @@@@@@@@@   @@@@@@\n                             @@@@@@@@@@                          @@@@@@             @@@@@@@@  @@@@@@\n                             @@@@@@@@@@                          @@@@@@              @@@@@@@@@@@@@@@\n                             @@@@@@@@@@                          @@@@@@                @@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      @@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                        @@@@ ")
+        logger.log(logging.INFO, "       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@                        @@@@@@\n    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@@                      @@@@@@\n  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@                @@@@@@\n@@@@@@@                                                      @@@@@@@@@@@@@@@@@@               @@@@@@\n@@@@@@@                                                      @@@@@@@@@@ @@@@@@@@@             @@@@@@\n@@@@@@@@                                                    @@@@@@@@@@@   @@@@@@@@@           @@@@@@\n @@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     @@@@@@@@@         @@@@@@\n   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       @@@@@@@@@       @@@@@@\n     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@         @@@@@@@@@     @@@@@@\n                           @@@@@@@@@@@@@                         @@@@@@           @@@@@@@@@   @@@@@@\n                             @@@@@@@@@@                          @@@@@@             @@@@@@@@  @@@@@@\n                             @@@@@@@@@@                          @@@@@@              @@@@@@@@@@@@@@@\n                             @@@@@@@@@@                          @@@@@@                @@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  @@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                    @@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                      @@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                        @@@@ ", stacklevel=1)
         self.log_message(f"TUPperware Save Editor {version} By SomeSpaceNerd", "INFO")
+        self.log_message(f"Python version: {platform.python_version()}, IS_NUITKA: {IS_NUITKA}, IS_ANDROID: {IS_ANDROID}", "DEBUG")
 
         # Load the tooltips JSON file
         try:
@@ -126,21 +136,20 @@ class MainWindow(QMainWindow):
             self.log_message(f"Error while loading the tooltips file: {e}", "WARNING")
             self.tooltips = {} # Assign the tooltips dictionary to an empty one to avoid causing more errors later on
 
-        self.ui.cipher_output_check_box.checkStateChanged.connect(self.update_cipher_output_option) # Connect update ciphered output function to the checkbox
+        if IS_ANDROID == False: # PC
+            self.ui.cipher_output_check_box.checkStateChanged.connect(self.update_cipher_output_option) # Connect update ciphered output function to the checkbox
+            self.ui.input_path_line_edit.returnPressed.connect(self.load_save) # Connect pressing enter in the input path line edit to the load save function
+            self.ui.output_path_line_edit.returnPressed.connect(self.export_save) # Connect pressing enter in the export path line edit to the export save function
 
-        # Connect the load save file button and pressing enter in the line edit to the load save function
-        self.ui.load_file_push_button.clicked.connect(self.load_save)
-        self.ui.input_path_line_edit.returnPressed.connect(self.load_save)
-
-        # Connect the export save fule button and pressing enter in the line edit to the export save function
-        self.ui.export_push_button.clicked.connect(self.export_save)
-        self.ui.output_path_line_edit.returnPressed.connect(self.export_save)
+        self.ui.load_file_push_button.clicked.connect(self.load_save) # Connect pressing the load file button to the load save function
+        self.ui.export_push_button.clicked.connect(self.export_save) # Connect pressing the export file button to the export save function
         self.deciphered_save = "" # Define an empty deciphered save varible for other functions
         self.cipher_output = True # Define the default cipher output becuase the checkbox functions only update when it's clicked
 
     def load_save(self):
         try:
-            self.input_file_path = self.ui.input_path_line_edit.text() # Get the input path from the GUI line edit
+            if IS_ANDROID == False: self.input_file_path = self.ui.input_path_line_edit.text() # Get the input path from the GUI line edit (only on PC)
+
             tl_game_save = QFile(self.input_file_path) # Load the input file with QFile
             if not tl_game_save.open(QIODevice.ReadOnly | QIODevice.Text): # Check if the input file exists
                 raise IOError(f"Cannot open input file: {tl_game_save.errorString()}")
@@ -372,15 +381,14 @@ class MainWindow(QMainWindow):
         self.log_message(f"Updated JSON save data is {new_data}", "DEBUG")
 
         # Check if the new save data is different from the input save data
-        diff = DeepDiff(json.loads(self.deciphered_save), new_data, ignore_order=False)
-        if not diff:
+        changes = [op for op in diff(json.loads(self.deciphered_save), new_data, expand=True) if op[0] == "change"]
+
+        if not changes:
             self.log_message("Input and output save data is identical", "INFO")
         else:
-            diff_dict = diff.to_dict()
-            for path, info in diff_dict.get("values_changed", {}).items(): # Loop through and format the DeepDiff output
-                old = info["old_value"]
-                new = info["new_value"]
-                self.log_message(f"Value at {path} changed from {old} -> {new}", "INFO")
+            for _, path, (old, new_value) in changes:
+                path_str = "/".join(str(p) for p in path) if isinstance(path, (list, tuple)) else str(path)
+                self.log_message(f"Value at {path_str} changed from {old!r} -> {new_value!r}", "INFO")
 
         self.json_game_save = new_data # Set the global save data variable to the new save data
 
@@ -391,24 +399,28 @@ class MainWindow(QMainWindow):
             if not self.deciphered_save:
                 raise Exception("You have not loaded a save file yet")
 
-            self.output_file_path = self.ui.output_path_line_edit.text() # Get the output file path from the GUI
-            if self.input_file_path == self.output_file_path: # Check if the user is exporting to the same file they imported from
-                # Show a warning dialog box and see if the user wants to continue
-                result = self.show_warning_dialog("Warning", "You are attempting to export the save data to the same file you imported it from. This is highly not reccomended unless you have a seperate backup of your input save.\nIgnoring this warning could cause irrecoverable issues in-game.")
+            if IS_ANDROID == False:
+                self.output_file_path = self.ui.output_path_line_edit.text() # Get the output file path from the GUI (only on PC)
 
-                if result == True:
-                    pass
-                if result == False:
-                    raise Exception("Canceled from warning dialog box")
+                if self.input_file_path == self.output_file_path: # Check if the user is exporting to the same file they imported from
+                    # Show a warning dialog box and see if the user wants to continue (only on PC)
+                    result = self.show_warning_dialog("Warning", "You are attempting to export the save data to the same file you imported it from. This is highly not reccomended unless you have a seperate backup of your input save.\nIgnoring this warning could cause irrecoverable issues in-game.")
 
-            elif os.path.exists(self.output_file_path): # Check if the user is exporting to a file that already exists
-                # Show a warning dialog box and see if the user wants to continue
-                result = self.show_warning_dialog("Warning", "You are attempting to export the save data to file that already exists, if you continue it will be overwritten.")
+                    if result == True:
+                        pass
+                    if result == False:
+                        raise Exception("Canceled from warning dialog box")
 
-                if result == True:
-                    pass
-                if result == False:
-                    raise Exception("Canceled from warning dialog box")
+                elif QFile.exists(self.output_file_path): # Check if the user is exporting to a file that already exists
+                    # Show a warning dialog box and see if the user wants to continue (only on PC)
+                    result = self.show_warning_dialog("Warning", "You are attempting to export the save data to file that already exists, if you continue it will be overwritten.")
+
+                    if result == True:
+                        pass
+                    if result == False:
+                        raise Exception("Canceled from warning dialog box")
+
+
 
             self.update_json_from_tree() # Update the save data JSON from the GUI
             export_data = json.dumps(self.json_game_save, indent=4) # Format the output data correctly
@@ -490,13 +502,15 @@ class MainWindow(QMainWindow):
     # Helper function to log messages to both the in-app console and log file
     def log_message(self, message, log_level):
         # Format message for the console
-        console_message = f"[{QTime.currentTime().toString("HH:mm:ss")}][{log_level}]: {message}"
+        console_message = f"""[{QTime.currentTime().toString("HH:mm:ss")}][{log_level}]: {message}"""
         # Display the message to the console
         if log_level != "DEBUG" or verbose_logging:
             self.ui.log_text_browser.append(console_message)
             scrollbar = self.ui.log_text_browser.verticalScrollBar()
             scrollbar.setValue(scrollbar.maximum())
-            print(console_message)
+
+            if IS_ANDROID == False: # Prevent double logging because logging and print both go to one log
+                print(console_message)
 
         # Log the message to the log file
         exec(f"""logger.log(logging.{log_level}, "{message}", stacklevel=3)""")

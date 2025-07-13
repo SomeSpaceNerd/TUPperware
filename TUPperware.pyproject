@@ -1,7 +1,8 @@
 {
     "files": [
-        "mainwindow.py",
+        "main.py",
         "form.ui",
+        "form_android.ui",
         "tooltips.json"
     ]
 }

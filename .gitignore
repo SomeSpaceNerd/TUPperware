@@ -1,8 +1,10 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
+deployment/
 venv/
 ui_form.py
+ui_form_android.py
 .qtcreator/
 __pycache__/
 *.user

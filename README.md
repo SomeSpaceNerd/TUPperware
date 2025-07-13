@@ -4,18 +4,8 @@ A graphical save editor for The Under Presents
 ## Downloading, Usage, and Modification
 This section will tell you how to download, use, and modify the code of the program
 
-### Download the program
-If you just want to download and use the program, download and extract the archive from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).
-
-If you want to download the program and intend to modify it, install Git on your machine and run the command ``` git clone https://github.com/SomeSpaceNerd/TUPperware.git ```.
-
-### Setup / Launching
-Step 1: Download and install Python 3.12 (or later) for your operating system from [Python's Website](https://www.python.org/downloads/).
-
-Step 2:   
-If you are on Windows, run the ``` TUPperware.bat ``` file to setup and run the program.
-
-If you are on Linux or MacOS run the ``` TUPperware.sh ``` file to setup and run the program.
+### Downloading and Launching the Program
+You can download the latest executable from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).
 
 ### Usage
 #### Finding your save files
@@ -39,9 +29,14 @@ To modify any value in the save file, double click on it, enter in it's new valu
 Enable or disable ciphering the output with the checkbox at the bottom of the GUI   
 Paste the full path to your output TLGameSave or TLGameSettings into the bottom line edit, then click the "Export" button or press enter
 
-### Modification and Contributing
-This program was made in QT Creator Community Edition 16.0.2 using Python 3.12 and PySide6.
+### Building from Source and Modifying
+This section only applies if you want to download the source code and make modifications, if you just want to run it look at the [Downloading and Launching section](#downloading-and-launching-the-program)
 
+To download the program's source code, please install git and use the command ```git clone https://github.com/SomeSpaceNerd/TUPperware.git```
+
+To build an executable file from the source code, install PySide6.8.3 using pip and then run the command ```pyside6-deploy -c pysidedeploy.spec``` inside the source directory
+
+This program was made in QT Creator Community Edition 16.0.2 using Python 3.12 and PySide6.8.3   
 I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss).   
 However, you can modify the mainwindow.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator.
 
