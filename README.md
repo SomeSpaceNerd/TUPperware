@@ -474,7 +474,7 @@ The game encrypts a JSON file using a substitution cipher with the following key
 This section outlines the known issues that can occur from loading a modified save into the game.
 
 1. Setting your mask design to 1 (Cyclops), or any number outside of the 0-9 range causes it to render without a front mesh (effectively being transparent from the front) and can cause other strange issues like players becoming invisible, or game crashes.
-2. Setting your mask design to 5 (VIP) and going into the Timeboat photobooth without 100%ing Timeboat will result in you being stuck in the limbo/interlude room with the photobooth displaying the "1" texture on it's screen. In this glitched state, you are able to take your mask out of the tray and do magic.
+2. Setting your mask design to 5 (VIP) without 100%ing Timeboat results in many glitches, including spawning in on the stage, being unable to enter timeboat (you will be stuck in the limbo/interlude area), and some others. These can all be fixed by first changing your mask (in the editor or in game) then uninstalling/reinstalling the game.
 
 ## Special thanks
 Thank you to reddit user u/Elegant_League_7367 for proposing the idea of a save editor and for help testing it   
