@@ -42,7 +42,7 @@ Sometimes pyside6-deploy replaces relative paths (like main.py) with full paths 
 
 This program was made in QT Creator Community Edition 16.0.2 using Python 3.12 and PySide6.8.3   
 I recommend using QT Creator to modify any part of the program, it can be downloaded from [QT's Website](https://www.qt.io/download-qt-installer-oss).   
-However, you can modify the mainwindow.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator.
+However, you can modify the main.py file in any normal IDE, but make sure you do not modify any UI files (like mainwindow.ui or ui_form.py) outside of QT Creator.
 
 ## Save File Notes
 This section contains some notes about the save file's formatting and values.
