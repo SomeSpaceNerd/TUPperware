@@ -22,7 +22,7 @@ icon = img/TUPperware_logo.png
 [python]
 
 # python path
-python_path = 
+python_path =
 
 # python packages to install
 packages = Nuitka==2.4.8,imageio==2.37.0,dictdiffer
@@ -40,7 +40,7 @@ qml_files =
 excluded_qml_plugins = 
 
 # qt modules used. comma separated
-modules = Gui,Widgets,Core
+modules = Gui,Core,Widgets
 
 # qt plugins used by the application
 plugins = platforms,styles,imageformats,accessiblebridge,iconengines,xcbglintegrations,platforms/darwin,platformthemes,egldeviceintegrations,platforminputcontexts,generic

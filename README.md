@@ -5,8 +5,11 @@ A graphical save editor for The Under Presents
 This section will tell you how to download, use, and modify the code of the program
 
 ### Downloading and Launching the Program
-You can download the latest release ZIP file (TUPperware_Vx.y.z.zip) from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).   
-Unzip and run ```TUPperware.exe``` to launch the program
+You can download the latest release executable file (TUPperware_Vx.y.z.exe) from the [releases page](https://github.com/SomeSpaceNerd/TUPperware/releases).   
+
+#### Launching with verbose debugging
+If there are unexpected errors or other issues occurring, you may want to enable verbose (debug) logging to have the program print more information about what it is doing.   
+To do this, launch the executable with the ```-V``` or ```--verbose``` command line argument.
 
 ### Usage
 #### Finding your save files
@@ -21,16 +24,19 @@ Download or copy/paste your save files into a folder like your documents folder 
 **PLEASE MAKE UNMODIFIED BACKUPS OF YOUR SAVE FILES BEFORE MODIFYING THEM**
 
 #### Importing a save file
-Paste the full path to your TLGameSave or TLGameSettings file into the top line edit, then click the "Load" button or press enter.
+Click on the top text box to open the file picker, select your save file, and click the "Load" button.
 
 #### Modifying a save file
-To modify any value in the save file, double click on it, enter in it's new value, and press enter
+To modify any value in the save file, double click on it, enter in it's new value, and press enter.
 
 #### Exporting a save file
-Enable or disable ciphering the output with the checkbox at the bottom of the GUI   
-Ciphering the output is required if you want to load the modified save in-game
+Enable or disable ciphering the output with the checkbox at the bottom of the GUI.   
+Ciphering the output is required if you want to load the modified save in-game.
 
-Paste the full path to your output TLGameSave or TLGameSettings into the bottom line edit, then click the "Export" button or press enter
+Click on the bottom text box to open the file picker, select/create the file you want to output the modified save file to, and press the "Export" button.
+
+If an there are issues with the values in your save file an error dialog will pop up during the export process, it is recommended to not skip past any errors, as it may cause in-game issues.   
+Erroneous values that need to be changed will be highlighted in red in the tree widget, change them according to what the error message suggested.
 
 ### Building from Source and Modifying
 This section only applies if you want to download the source code and make modifications, if you just want to run it look at the [Downloading and Launching section](#downloading-and-launching-the-program)
@@ -126,6 +132,8 @@ The game encrypts a JSON file using a substitution cipher with the following key
 | \u008D              | (space)              |
 | \u0081              | ,                    |
 | §                   | (newline)            |
+
+This key was found by reverse engineering my own save file, no decompilations or other unauthorized methods were used in the creation of this program and the cipher key it uses.
 
 ### Tutorial keys:
 #### onboardingProgress
@@ -475,9 +483,12 @@ This section outlines the known issues that can occur from loading a modified sa
 
 1. Setting your mask design to 1 (Cyclops), or any number outside of the 0-9 range causes it to render without a front mesh (effectively being transparent from the front) and can cause other strange issues like players becoming invisible, or game crashes.
 2. Setting your mask design to 5 (VIP) and going into the Timeboat photobooth without 100%ing Timeboat will result in you being stuck in the limbo/interlude room with the photobooth displaying the "1" texture on it's screen. In this glitched state, you are able to take your mask out of the tray and do magic.
+3. Changing your mask before completing the tutorial will cause your mask to not update in-game.
+
+All of these issues will be caught by the program before exporting your save file.
 
 ## Special thanks
-Thank you to reddit user u/Elegant_League_7367 for proposing the idea of a save editor and for help testing it   
+Thank you to reddit user u/Elegant_League_7367 for proposing the idea of a save editor and for help testing it.   
 
 ## Disclaimer
 
@@ -488,4 +499,7 @@ This software is provided solely for educational and research purposes. It is in
 By using this software, you agree that you do so at your own risk. The author is not responsible for any loss of save data, in-game progress, or consequences such as account suspension, banning, or any other penalties that may result from its use.
 
 
-While this tool has not caused any account to be banned from online features in it's testing, the possibility of that occurring CANNOT be ruled out
+While this tool has not caused any account to be banned from online features in it's testing, the possibility of that occurring CANNOT be ruled out.
+
+---
+IRONS: 454-6000100

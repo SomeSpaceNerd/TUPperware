@@ -39,6 +39,10 @@
       <height>30</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Single Click: Open file dialog
+Double Click: Type in the text box </string>
+    </property>
     <property name="placeholderText">
      <string>Path to your TLGameSave / TLGameSettings</string>
     </property>
@@ -51,6 +55,9 @@
       <width>80</width>
       <height>30</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Load the save file from the path in the text box</string>
     </property>
     <property name="text">
      <string>Load</string>
@@ -65,6 +72,9 @@
       <height>100</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Information and logs will be printed here</string>
+    </property>
    </widget>
    <widget class="QTreeWidget" name="save_tree_widget">
     <property name="geometry">
@@ -74,6 +84,9 @@
       <width>480</width>
       <height>200</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string/>
     </property>
     <property name="editTriggers">
      <set>QAbstractItemView::EditTrigger::DoubleClicked|QAbstractItemView::EditTrigger::EditKeyPressed</set>
@@ -107,6 +120,10 @@
       <height>30</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Single Click: Open file dialog
+Double Click: Type in the text box </string>
+    </property>
     <property name="placeholderText">
      <string>Path to the output save file</string>
     </property>
@@ -119,6 +136,9 @@
       <width>80</width>
       <height>30</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Export the save file to the path in the text box</string>
     </property>
     <property name="text">
      <string>Export</string>

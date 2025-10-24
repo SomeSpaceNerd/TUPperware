@@ -1,4 +1,4 @@
-{
+tooltips_dict = {
     "onboardingProgress":["Your progress through the tutorial","0 = None\n1 = UnderVisit_N1_fromHologram\n2 = UnderVisit_N2_fromDemoShipTableau\n3 = UnderVisit_N3_fromRegularShip\n4 = ElevatorPuzzleComplete"],
     "_desertTutorialCompleteExplicit":["Whether or not you completed the desert tutorial", "True or False"],
     "mcShouldDoPostTableau":["Whether or not the MC should do post tableau", "True or False"],
