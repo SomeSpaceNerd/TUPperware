@@ -11,6 +11,17 @@ You can download the latest release executable file (TUPperware_Vx.y.z.exe) from
 If there are unexpected errors or other issues occurring, you may want to enable verbose (debug) logging to have the program print more information about what it is doing.   
 To do this, launch the executable with the ```-V``` or ```--verbose``` command line argument.
 
+#### Antivirus False-Positive
+This program may be classified as "Trojan:Win32/Wacatac.C!ml" upon download or launch, this is a false-positive.   
+This program uses pyside6-deploy, a Nuitka based tool, to compile the python code and UI files into an executable.   
+Nuitka is known to trigger antivirus false-positives due to its use of compressed data, and it's unfortunate prevalence in actual malware.   
+If you are still concerned, you can over all of the code in this repository and compile it into an executable yourself.   
+
+Here are some links you may find useful:   
+[Official acknowledgement of this issue](https://nuitka.net/user-documentation/common-issue-solutions.html#windows-virus-scanners)   
+[Nuitka creator explaining why this occurs](https://github.com/Nuitka/Nuitka/issues/2685#issuecomment-1923357489)   
+[VirusTotal scan of TUPperware V1.3.0](https://www.virustotal.com/gui/file/d6f1fd34aea82be88124d5db4ec0d77373f8e0d7ac1540b055c6b9f46fe348d7/detection)
+
 ### Usage
 #### Finding your save files
 On Windows your save files are located in your user's appdata folder under ```LocalLow\Tender Claws\The Under Presents```   
