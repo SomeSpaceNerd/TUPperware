@@ -15,7 +15,7 @@ To do this, launch the executable with the ```-V``` or ```--verbose``` command l
 This program may be classified as "Trojan:Win32/Wacatac.C!ml" upon download or launch, this is a false-positive.   
 This program uses pyside6-deploy, a Nuitka based tool, to compile the python code and UI files into an executable.   
 Nuitka is known to trigger antivirus false-positives due to its use of compressed data, and it's unfortunate prevalence in actual malware.   
-If you are still concerned, you can over all of the code in this repository and compile it into an executable yourself.   
+If you are still concerned, you can look over all of the code in this repository and compile it into an executable yourself.   
 
 Here are some links you may find useful:   
 [Official acknowledgement of this issue](https://nuitka.net/user-documentation/common-issue-solutions.html#windows-virus-scanners)   
