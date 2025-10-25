@@ -20,7 +20,7 @@ If you are still concerned, you can look over all of the code in this repository
 Here are some links you may find useful:   
 [Official acknowledgement of this issue](https://nuitka.net/user-documentation/common-issue-solutions.html#windows-virus-scanners)   
 [Nuitka creator explaining why this occurs](https://github.com/Nuitka/Nuitka/issues/2685#issuecomment-1923357489)   
-[VirusTotal scan of TUPperware V1.3.0](https://www.virustotal.com/gui/file/d6f1fd34aea82be88124d5db4ec0d77373f8e0d7ac1540b055c6b9f46fe348d7/detection)
+[VirusTotal scan of TUPperware V1.3.0 (I encourage you to actually look at what was flagged and by what engines to understand why flagging the program as malware is inaccurate)](https://www.virustotal.com/gui/file/d6f1fd34aea82be88124d5db4ec0d77373f8e0d7ac1540b055c6b9f46fe348d7/detection)
 
 ### Usage
 #### Finding your save files
