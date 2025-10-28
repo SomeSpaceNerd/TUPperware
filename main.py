@@ -1,6 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
-version = "V1.3.0"
+version = "V1.3.1"
 verbose_logging = False # If set to true, the program will log more information that may be useful for debugging
 
 cipher_table = { # Cipher key, based on https://www.reddit.com/user/Elegant_League_7367/
@@ -622,7 +622,10 @@ class MainWindow(QMainWindow):
                 print(console_message)
 
         # Log the message to the log file
-        exec(f"""logger.log(logging.{log_level}, "{message}", stacklevel=3)""")
+        if hasattr(logger, log_level.lower()):
+            getattr(logger, log_level.lower())(message, stacklevel=2)
+        else:
+            logger.info(message, stacklevel=2)
 
     # Functions to highlight and select items in tree
     def _iter_descendants(self, root: QTreeWidgetItem):
